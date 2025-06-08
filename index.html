@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Control de Dinero</title>
   <link rel="icon" href="Icono de calculadora_20250608_150126_0000.jpg" type="image/jpeg">  <style>
+    <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1976d2">
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
@@ -229,5 +231,12 @@
     mostrarHistorial();
 
   </script>
+  <script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js')
+    .then(reg => console.log('Service Worker registrado:', reg))
+    .catch(err => console.log('Error al registrar SW:', err));
+}
+</script>
 </body>
 </html>
