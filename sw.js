@@ -3,10 +3,11 @@ const urlsToCache = [
   '/',
   '/index.html',
   '/style.css',
-  '/script.js',
-  // Agrega aquí cualquier archivo adicional
+  '/script.js'
+  // Add other files you want to cache here
 ];
 
+// Install event
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -16,6 +17,7 @@ self.addEventListener('install', event => {
   );
 });
 
+// Fetch event
 self.addEventListener('fetch', event => {
   event.respondWith(
     caches.match(event.request)
