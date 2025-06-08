@@ -2,241 +2,735 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Control de Dinero</title>
-  <link rel="icon" href="Icono de calculadora_20250608_150126_0000.jpg" type="image/jpeg">  <style>
-    <link rel="manifest" href="manifest.json">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <!-- Manifest PWA -->
+<link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1976d2">
-    body {
-      font-family: Arial, sans-serif;
-      padding: 20px;
-      background: #0f2027;  /* fondo oscuro */
-      max-width: 500px;
-      margin: auto;
-      color: #e0f7fa;
+<meta name="background-color" content="#00332b">
+<!-- Ícono recomendado solo el real -->
+<link rel="icon" type="image/jpeg" sizes="192x192" href="Icono de calculadora_20250608_150126_0000.jpg">
+<link rel="apple-touch-icon" href="Icono de calculadora_20250608_150126_0000.jpg">
+  <title>Control de Dinero</title>
+  <style>
+    :root {
+      --primary: #40e0d0;
+      --secondary: #1de9b6;
+      --bg-dark: #00332b;
+      --bg-light: #e0f7fa;
+      --text-dark: #004d40;
+      --text-light: #e0f7fa;
+      --error: #ff4444;
     }
-    h1, h2 {
+    body[data-theme="light"] {
+      background: linear-gradient(135deg, #0fffc1, var(--bg-dark));
+      color: var(--text-light);
+    }
+    body[data-theme="dark"] {
+      background: linear-gradient(135deg, #232526, #00332b 90%);
+      color: var(--text-light);
+    }
+
+    h1, h2, h3 {
       text-align: center;
-      color: #64ffda;
-      text-shadow: 0 0 8px #64ffda;
+      text-shadow: 0 0 5px var(--primary);
     }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .tab-btn {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: var(--primary);
+      border: none;
+      border-radius: 8px 8px 0 0;
+      color: var(--text-dark);
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+
+    .tab-btn.active {
+      background: var(--secondary);
+      box-shadow: 0 0 15px var(--secondary);
+    }
+
+    .tab-btn:hover {
+      background: var(--secondary);
+    }
+
+    .tab-content {
+      display: none;
+      background: var(--bg-dark);
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px var(--primary) inset;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
     .campo {
       margin-bottom: 15px;
     }
+
     label {
       display: block;
       margin-bottom: 5px;
-      font-weight: bold;
-      text-shadow: 0 0 5px #26c6da;
+      text-shadow: 0 0 4px var(--primary);
     }
-    input[type="number"] {
+
+    input[type="number"], input[type="text"] {
       width: 100%;
       padding: 10px;
       font-size: 16px;
       border: none;
-      border-radius: 6px;
-      background: #004d40;
-      color: #b2dfdb;
-      box-shadow: 0 0 10px #26c6da;
-      transition: box-shadow 0.3s ease;
+      border-radius: 5px;
+      background: var(--bg-dark);
+      color: var(--text-light);
+      box-shadow: 0 0 8px var(--primary) inset;
+      transition: box-shadow 0.3s;
     }
-    input[type="number"]:focus {
+
+    input[type="number"]:focus, input[type="text"]:focus {
       outline: none;
-      box-shadow: 0 0 20px #00bcd4;
-      color: #ffffff;
-      background: #00796b;
+      box-shadow: 0 0 12px var(--primary) inset;
     }
-    .valores-container {
+
+    input.error {
+      border: 2px solid var(--error);
+    }
+
+    .facturas-container {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
+
+    .factura-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .factura-item input {
+      flex: 1;
+    }
+
     button {
       padding: 10px;
       margin-top: 10px;
       width: 100%;
       font-size: 16px;
+      background: var(--primary);
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
+      color: var(--text-dark);
       cursor: pointer;
-      color: #004d40;
-      background: #40c4ff;
-      box-shadow: 0 0 12px #26c6da;
-      transition: background 0.3s ease;
-      text-shadow: 0 0 4px #006064;
+      box-shadow: 0 0 10px var(--primary);
+      transition: background 0.3s, box-shadow 0.3s;
     }
+
     button:hover {
-      background: #00acc1;
-      color: #e0f7fa;
-      box-shadow: 0 0 20px #00bcd4;
+      background: var(--secondary);
+      box-shadow: 0 0 15px var(--secondary);
     }
+
+    .delete-btn {
+      width: auto;
+      padding: 5px 10px;
+      font-size: 14px;
+    }
+
+    #error {
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.2em;
+      margin-top: 10px;
+      color: var(--error);
+      text-shadow: 0 0 4px var(--error);
+      display: none;
+    }
+
     #resultado {
       text-align: center;
-      margin-top: 20px;
-      font-size: 1.3em;
-      color: #26c6da;
-      text-shadow: 0 0 8px #26c6da;
-      min-height: 2em;
+      font-weight: bold;
+      font-size: 1.4em;
+      margin-top: 15px;
+      text-shadow: 0 0 6px var(--primary);
     }
+
     #historial {
-      background: #004d40;
-      padding: 10px;
-      border-radius: 6px;
-      max-height: 200px;
+      max-height: 300px;
       overflow-y: auto;
-      color: #b2dfdb;
-      box-shadow: inset 0 0 10px #00bcd4;
+      font-size: 0.9em;
+      color: var(--text-light);
+    }
+
+    #historial div {
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .config {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .stats {
+      margin-top: 20px;
+      padding: 10px;
+      background: var(--bg-dark);
+      border-radius: 8px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <h1>Control de Dinero</h1>
 
+  <div class="config">
+    <button id="toggleSonido">🔊 Sonido: Activado</button>
+    <button id="toggleTema">🌙 Tema Oscuro</button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="facturas">Facturas</button>
+    <button class="tab-btn" data-tab="historial">Historial</button>
+  </div>
+
+  <div id="facturas-tab" class="tab-content active">
+    <form id="facturaForm" autocomplete="off" onsubmit="return false;">
+      <div class="campo">
+        <label for="facturas">Facturas:</label>
+        <div id="facturas" class="facturas-container"></div>
+        <button type="button" id="btnAgregar">+ Añadir factura</button>
+      </div>
+      <div class="campo">
+        <label for="dineroRecibido">Dinero recibido:</label>
+        <input id="dineroRecibido" type="number" step="0.01" min="0" aria-label="Dinero recibido" />
+      </div>
+      <div class="campo">
+        <label for="rebaja">Rebaja (opcional):</label>
+        <input id="rebaja" type="number" step="0.01" min="0" placeholder="Monto de rebaja" />
+        <button type="button" id="btnAplicarRebaja">Aplicar Rebaja</button>
+      </div>
+      <button type="button" id="btnGuardar">Guardar en historial</button>
+      <button type="button" id="btnLimpiar">Limpiar campos</button>
+    </form>
+    <div id="error" role="alert"></div>
+    <h2 id="resultado"></h2>
+  </div>
+
+  <div id="historial-tab" class="tab-content">
+    <h3>Historial:</h3>
+    <div class="campo">
+      <label for="filtroFecha">Filtrar por fecha:</label>
+      <input id="filtroFecha" type="date" />
+    </div>
+    <div id="historial"></div>
+    <div class="pagination">
+      <button id="prevPage" disabled>Anterior</button>
+      <span id="pageInfo"></span>
+      <button id="nextPage">Siguiente</button>
+    </div>
+    <div class="stats" id="estadisticas"></div>
+    <button id="btnBorrarHistorial">Borrar historial</button>
+    <button id="btnDescargarHistorial">Descargar CSV</button>
+    <button id="btnExportarPDF">Exportar PDF</button>
+  </div>
+
+  <!-- jsPDF + autoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
   <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const { jsPDF } = window.jspdf;
+      const facturasContainer = document.getElementById('facturas');
+      const dineroRecibido = document.getElementById('dineroRecibido');
+      const rebajaInput = document.getElementById('rebaja');
+      const resultado = document.getElementById('resultado');
+      const errorDiv = document.getElementById('error');
+      const historialDiv = document.getElementById('historial');
+      const btnAgregar = document.getElementById('btnAgregar');
+      const btnGuardar = document.getElementById('btnGuardar');
+      const btnLimpiar = document.getElementById('btnLimpiar');
+      const btnAplicarRebaja = document.getElementById('btnAplicarRebaja');
+      const tabButtons = document.querySelectorAll('.tab-btn');
+      const tabContents = document.querySelectorAll('.tab-content');
+      const toggleSonido = document.getElementById('toggleSonido');
+      const toggleTema = document.getElementById('toggleTema');
+      const filtroFecha = document.getElementById('filtroFecha');
+      const prevPage = document.getElementById('prevPage');
+      const nextPage = document.getElementById('nextPage');
+      const pageInfo = document.getElementById('pageInfo');
+      const estadisticas = document.getElementById('estadisticas');
+      const facturaForm = document.getElementById('facturaForm');
+
+      const textos = {
+        sinTransacciones: 'No hay transacciones en el historial.',
+        eliminar: 'Eliminar',
+        guardar: 'Guardar en historial',
+        errorRebajaNegativa: 'La rebaja no puede ser negativa.',
+        errorRebajaMayor: 'La rebaja no puede ser mayor al total de las facturas.',
+        errorHistorial: 'No se pudo guardar el historial.',
+        errorFacturas: 'Añade facturas válidas para guardar.',
+        noEntradasExportar: 'No hay entradas para exportar.',
+        errorPDF: 'No se pudo exportar PDF (autoTable no cargado)'
+      };
+
+      let sonidoHabilitado = true;
+      let currentPage = 1;
+      const itemsPerPage = 10;
+      let historial = [];
+      const moneda = 'USD';
+
+      // TEMA CLARO/OSCURO
+      function cargarTema() {
+        const temaGuardado = localStorage.getItem('tema');
+        if (temaGuardado === 'dark') {
+          document.body.setAttribute('data-theme', 'dark');
+          toggleTema.textContent = '☀️ Tema Claro';
+        } else {
+          document.body.setAttribute('data-theme', 'light');
+          toggleTema.textContent = '🌙 Tema Oscuro';
+        }
+      }
+      toggleTema.addEventListener('click', () => {
+        const isDark = document.body.getAttribute('data-theme') === 'dark';
+        document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+        localStorage.setItem('tema', isDark ? 'light' : 'dark');
+        toggleTema.textContent = isDark ? '🌙 Tema Oscuro' : '☀️ Tema Claro';
+      });
+
+      // Sonido
+      const AudioContext = window.AudioContext || window.webkitAudioContext;
+      let audioCtx = null;
+      function initAudioContext() {
+        if (!AudioContext) return false;
+        if (!audioCtx) {
+          try {
+            audioCtx = new AudioContext();
+          } catch (e) {
+            return false;
+          }
+        }
+        return true;
+      }
+      function playBeep() {
+        if (!sonidoHabilitado || !initAudioContext()) return;
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.type = 'square';
+        oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        setTimeout(() => oscillator.stop(), 100);
+      }
+      function playError() {
+        if (!sonidoHabilitado || !initAudioContext()) return;
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(1200, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.2, audioCtx.currentTime);
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        setTimeout(() => oscillator.stop(), 200);
+      }
+      function playDestruction() {
+        if (!sonidoHabilitado || !initAudioContext()) return;
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(300, audioCtx.currentTime);
+        gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        oscillator.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        oscillator.start();
+        oscillator.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.3);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+        setTimeout(() => oscillator.stop(), 350);
+      }
+
+      function isLocalStorageAvailable() {
+        try {
+          const test = '__test__';
+          localStorage.setItem(test, test);
+          localStorage.removeItem(test);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function loadHistorial() {
+        if (!isLocalStorageAvailable()) return [];
+        try {
+          const stored = localStorage.getItem('historial');
+          return stored ? JSON.parse(stored).filter(validarEntrada) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveHistorial() {
+        if (!isLocalStorageAvailable()) return;
+        try {
+          localStorage.setItem('historial', JSON.stringify(historial));
+        } catch (e) {
+          errorDiv.style.display = 'block';
+          errorDiv.textContent = textos.errorHistorial;
+        }
+      }
+
+      function validarEntrada(item) {
+        return item && typeof item === 'object' &&
+          ['fecha', 'totalFacturas', 'rebaja', 'total', 'recibido', 'devuelto', 'moneda']
+            .every(key => key in item && item[key] !== undefined && item[key] !== null);
+      }
+
+      function formatCurrency(value) {
+        return new Intl.NumberFormat('es-ES', { style: 'currency', currency: moneda }).format(value);
+      }
+
+      function switchTab(tabId) {
+        tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
+        tabContents.forEach(content => content.classList.toggle('active', content.id === `${tabId}-tab`));
+        if (tabId === 'historial') mostrarHistorial();
+        playBeep();
+      }
+
+      function renderFacturas() {
+        if (facturasContainer.childElementCount === 0) agregarFactura();
+      }
+
+      function agregarFactura(valor = '') {
+        const div = document.createElement('div');
+        div.className = 'factura-item';
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.step = '0.01';
+        input.min = '0';
+        input.placeholder = 'Monto de factura';
+        input.setAttribute('aria-label', 'Monto de factura');
+        if (valor) input.value = valor;
+        input.addEventListener('input', () => {
+          const val = input.value.trim();
+          if (!val || isNaN(val)) return;
+          const numero = parseFloat(val);
+          if (!isNaN(numero) && numero >= 0) {
+            input.classList.remove('error');
+          } else {
+            input.classList.add('error');
+          }
+          calcularAutomatico();
+        });
+        const deleteBtn = document.createElement('button');
+        deleteBtn.className = 'delete-btn';
+        deleteBtn.type = 'button';
+        deleteBtn.textContent = textos.eliminar;
+        deleteBtn.setAttribute('aria-label', 'Eliminar factura');
+        deleteBtn.addEventListener('click', () => {
+          div.remove();
+          calcularAutomatico();
+          playDestruction();
+        });
+        div.appendChild(input);
+        div.appendChild(deleteBtn);
+        facturasContainer.appendChild(div);
+        input.focus();
+        playBeep();
+      }
+
+      function obtenerSumaFacturas() {
+        let suma = 0;
+        document.querySelectorAll('#facturas input').forEach(input => {
+          const val = parseFloat(input.value);
+          if (isNaN(val) || val <= 0) {
+            input.classList.add('error');
+          } else {
+            input.classList.remove('error');
+            suma += val;
+          }
+        });
+
+        const rebaja = parseFloat(rebajaInput.value) || 0;
+        if (rebaja < 0) {
+          rebajaInput.classList.add('error');
+          errorDiv.style.display = 'block';
+          errorDiv.textContent = textos.errorRebajaNegativa;
+          playError();
+          return null;
+        }
+
+        if (rebaja > suma) {
+          rebajaInput.classList.add('error');
+          errorDiv.style.display = 'block';
+          errorDiv.textContent = textos.errorRebajaMayor;
+          playError();
+          return null;
+        }
+
+        errorDiv.style.display = 'none';
+        return { totalFacturas: suma, rebaja };
+      }
+
+      function calcularAutomatico() {
+        errorDiv.style.display = 'none';
+        const suma = obtenerSumaFacturas();
+        if (suma === null) {
+          resultado.innerHTML = '';
+          return;
+        }
+        const { totalFacturas, rebaja } = suma;
+        const totalAjustado = totalFacturas - rebaja;
+        const recibido = parseFloat(dineroRecibido.value) || 0;
+        const devuelto = recibido - totalAjustado;
+        resultado.innerHTML = `
+          Total Facturas: ${formatCurrency(totalFacturas)}<br>
+          Rebaja: ${formatCurrency(rebaja)}<br>
+          Total Ajustado: ${formatCurrency(totalAjustado)}<br>
+          Dinero devuelto: ${formatCurrency(devuelto)}
+        `;
+      }
+
+      function guardarHistorial() {
+        const suma = obtenerSumaFacturas();
+        if (suma === null || suma.totalFacturas === 0) {
+          errorDiv.style.display = 'block';
+          errorDiv.textContent = textos.errorFacturas;
+          playError();
+          return;
+        }
+        const { totalFacturas, rebaja } = suma;
+        const totalAjustado = totalFacturas - rebaja;
+        const recibido = parseFloat(dineroRecibido.value) || 0;
+        const devuelto = recibido - totalAjustado;
+        const fecha = new Date().toLocaleString();
+        historial.unshift({
+          fecha,
+          transaccionNum: historial.filter(i => i.fecha.split(',')[0] === fecha.split(',')[0]).length + 1,
+          totalFacturas,
+          rebaja,
+          total: totalAjustado,
+          recibido,
+          devuelto,
+          moneda
+        });
+        saveHistorial();
+        limpiarCampos();
+        switchTab('historial');
+        mostrarHistorial();
+        playBeep();
+      }
+
+      function limpiarCampos() {
+        facturasContainer.innerHTML = '';
+        dineroRecibido.value = '';
+        rebajaInput.value = '';
+        resultado.innerHTML = '';
+        errorDiv.style.display = 'none';
+        agregarFactura();
+        playBeep();
+      }
+
+      function mostrarHistorial(page = 1) {
+        historial = loadHistorial();
+        const filteredHistorial = filtroFecha.value
+          ? historial.filter(item => item.fecha.startsWith(filtroFecha.value))
+          : historial;
+
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        const paginatedHistorial = filteredHistorial.slice(start, end);
+
+        historialDiv.innerHTML = paginatedHistorial.map((item, index) => `
+          <div>
+            <span>Transacción ${item.transaccionNum} - <strong>${item.fecha}</strong>: 
+              Total: ${formatCurrency(item.total)}</span>
+            <button class="delete-btn" type="button" onclick="eliminarEntrada(${start + index})">${textos.eliminar}</button>
+          </div>
+        `).join('');
+
+        if (paginatedHistorial.length === 0) {
+          historialDiv.innerHTML = `<p>${textos.sinTransacciones}</p>`;
+        }
+
+        currentPage = page;
+        pageInfo.textContent = `Página ${page} de ${Math.max(1, Math.ceil(filteredHistorial.length / itemsPerPage))}`;
+        prevPage.disabled = page === 1;
+        nextPage.disabled = end >= filteredHistorial.length;
+
+        actualizarEstadisticas(filteredHistorial);
+      }
+
+      function actualizarEstadisticas(historialFiltrado) {
+        if (!historialFiltrado || historialFiltrado.length === 0) {
+          estadisticas.textContent = '';
+          return;
+        }
+        const sumaTotal = historialFiltrado.reduce((acc, item) => acc + item.total, 0);
+        const sumaRecibido = historialFiltrado.reduce((acc, item) => acc + item.recibido, 0);
+        const sumaDevuelto = historialFiltrado.reduce((acc, item) => acc + item.devuelto, 0);
+        estadisticas.innerHTML = `
+          <strong>Estadísticas del filtro:</strong><br>
+          Suma total: ${formatCurrency(sumaTotal)}<br>
+          Suma recibido: ${formatCurrency(sumaRecibido)}<br>
+          Suma devuelto: ${formatCurrency(sumaDevuelto)}<br>
+          Transacciones: ${historialFiltrado.length}
+        `;
+      }
+
+      function eliminarEntrada(index) {
+        historial.splice(index, 1);
+        saveHistorial();
+        const totalPages = Math.max(1, Math.ceil(historial.length / itemsPerPage));
+        if (currentPage > totalPages) currentPage = totalPages;
+        mostrarHistorial(currentPage);
+        playDestruction();
+      }
+      window.eliminarEntrada = eliminarEntrada;
+
+      function descargarHistorial() {
+        historial = loadHistorial();
+        let csv = 'Fecha,Total Facturas,Rebaja,Total,Recibido,Devuelto,Moneda\n';
+        historial.forEach(item => {
+          csv += `${item.fecha},${item.totalFacturas},${item.rebaja},${item.total},${item.recibido},${item.devuelto},${item.moneda}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `historial_${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        playBeep();
+      }
+
+      function exportarHistorialPDF() {
+        historial = loadHistorial();
+        if (historial.length === 0) {
+          errorDiv.style.display = 'block';
+          errorDiv.textContent = textos.noEntradasExportar;
+          playError();
+          return;
+        }
+        const doc = new jsPDF();
+        doc.setFontSize(16);
+        doc.text('Historial de Transacciones', 20, 20);
+        const headers = [['Fecha', 'Total Facturas', 'Rebaja', 'Total', 'Recibido', 'Devuelto', 'Moneda']];
+        const data = historial.map(item => [
+          item.fecha,
+          item.totalFacturas.toFixed(2),
+          item.rebaja.toFixed(2),
+          item.total.toFixed(2),
+          item.recibido.toFixed(2),
+          item.devuelto.toFixed(2),
+          item.moneda
+        ]);
+        if (typeof doc.autoTable === 'function') {
+          doc.autoTable({ head: headers, body: data, startY: 30 });
+          doc.save(`historial_transacciones_${new Date().toISOString().split('T')[0]}.pdf`);
+          playBeep();
+        } else {
+          errorDiv.style.display = 'block';
+          errorDiv.textContent = textos.errorPDF;
+          playError();
+        }
+      }
+
+      function borrarHistorial() {
+        if (confirm('¿Seguro que quieres borrar todo el historial?')) {
+          historial = [];
+          saveHistorial();
+          mostrarHistorial();
+          playDestruction();
+        }
+      }
+
+      toggleSonido.addEventListener('click', () => {
+        sonidoHabilitado = !sonidoHabilitado;
+        toggleSonido.textContent = `🔊 Sonido: ${sonidoHabilitado ? 'Activado' : 'Desactivado'}`;
+        playBeep();
+      });
+
+      filtroFecha.addEventListener('input', () => {
+        currentPage = 1;
+        mostrarHistorial();
+      });
+
+      prevPage.addEventListener('click', () => {
+        if (currentPage > 1) mostrarHistorial(currentPage - 1);
+      });
+
+      nextPage.addEventListener('click', () => {
+        mostrarHistorial(currentPage + 1);
+      });
+
+      tabButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+
+      btnAgregar.addEventListener('click', () => {
+        agregarFactura();
+      });
+
+      btnGuardar.addEventListener('click', guardarHistorial);
+      btnLimpiar.addEventListener('click', limpiarCampos);
+      btnAplicarRebaja.addEventListener('click', calcularAutomatico);
+      document.getElementById('btnBorrarHistorial').addEventListener('click', borrarHistorial);
+      document.getElementById('btnDescargarHistorial').addEventListener('click', descargarHistorial);
+      document.getElementById('btnExportarPDF').addEventListener('click', exportarHistorialPDF);
+
+      dineroRecibido.addEventListener('input', calcularAutomatico);
+      rebajaInput.addEventListener('input', calcularAutomatico);
+
+      facturaForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        guardarHistorial();
+      });
+
+      cargarTema();
+      renderFacturas();
+      mostrarHistorial();
+      switchTab('facturas');
+    });
+  </script>
+  <!-- Service Worker para funcionalidades PWA -->
+<script>
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(reg => console.log('✔️ Service Worker registrado'))
-      .catch(err => console.log('❌ Error al registrar el Service Worker', err));
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('service-worker.js')
+      .then(function(reg) {
+        console.log('Service Worker registrado correctamente:', reg.scope);
+      })
+      .catch(function(error) {
+        console.log('Error al registrar Service Worker:', error);
+      });
+    });
   }
 </script>
 
-
-  <div class="campo">
-    <label>Valores:</label>
-    <div id="valores" class="valores-container"></div>
-    <button id="btnAgregar">+ Añadir valor</button>
-  </div>
-
-  <div class="campo">
-    <label>Dinero recibido:</label>
-    <input id="dineroRecibido" type="number" inputmode="decimal" />
-  </div>
-
-  <button id="btnCalcular">Calcular</button>
-  <button id="btnLimpiar">Actualizar valores</button>
-
-  <h2 id="resultado"></h2>
-
-  <h3>Historial:</h3>
-  <div id="historial"></div>
-  <button id="btnBorrarHistorial">🗑️ Borrar historial</button>
-
-  <script>
-    const valoresContainer = document.getElementById('valores');
-    const dineroRecibido = document.getElementById('dineroRecibido');
-    const resultado = document.getElementById('resultado');
-    const historialDiv = document.getElementById('historial');
-
-    const btnAgregar = document.getElementById('btnAgregar');
-    const btnCalcular = document.getElementById('btnCalcular');
-    const btnLimpiar = document.getElementById('btnLimpiar');
-    const btnBorrarHistorial = document.getElementById('btnBorrarHistorial');
-
-    // Sonidos
-    const beepSound = new Audio('https://actions.google.com/sounds/v1/cartoon/wood_plank_flicks.ogg');
-    const errorSound = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
-    const destructionSound = new Audio('https://actions.google.com/sounds/v1/explosions/explosion_4.ogg');
-
-    function agregarValor(valor = '') {
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.inputMode = 'decimal';
-      input.value = valor;
-      input.placeholder = '0.00';
-
-      // Actualiza suma automática al cambiar valor
-      input.addEventListener('input', mostrarSumaAutomatica);
-
-      valoresContainer.appendChild(input);
-      beepSound.play();
-      mostrarSumaAutomatica();
-    }
-
-    function obtenerSumaValores() {
-      let suma = 0;
-      document.querySelectorAll('#valores input').forEach(input => {
-        const val = parseFloat(input.value);
-        if (!isNaN(val)) suma += val;
-      });
-      return suma;
-    }
-
-    function mostrarSumaAutomatica() {
-      const total = obtenerSumaValores();
-      resultado.textContent = `Total actual: ${total.toFixed(2)}`;
-    }
-
-    function calcular() {
-      const total = obtenerSumaValores();
-      const recibido = parseFloat(dineroRecibido.value) || 0;
-      if (recibido < total) {
-        errorSound.play();
-        alert('Error: El dinero recibido es menor que la suma de los valores.');
-        return;
-      }
-      const devuelto = recibido - total;
-
-      resultado.innerHTML = `
-        Total: ${total.toFixed(2)}<br>
-        Dinero recibido: ${recibido.toFixed(2)}<br>
-        Dinero devuelto: ${devuelto.toFixed(2)}
-      `;
-
-      guardarHistorial(total, recibido, devuelto);
-    }
-
-    function limpiarCampos() {
-      valoresContainer.innerHTML = '';
-      dineroRecibido.value = '';
-      resultado.textContent = '';
-      agregarValor();
-    }
-
-    function guardarHistorial(total, recibido, devuelto) {
-      const fecha = new Date().toLocaleString();
-      const entrada = { fecha, total, recibido, devuelto };
-      let historial = JSON.parse(localStorage.getItem('historial') || '[]');
-      historial.unshift(entrada);
-      localStorage.setItem('historial', JSON.stringify(historial));
-      mostrarHistorial();
-    }
-
-    function mostrarHistorial() {
-      let historial = JSON.parse(localStorage.getItem('historial') || '[]');
-      historialDiv.innerHTML = historial.map(item =>
-        `<div><strong>${item.fecha}</strong>: Total ${item.total.toFixed(2)} | Recibido ${item.recibido.toFixed(2)} | Devuelto ${item.devuelto.toFixed(2)}</div>`
-      ).join('');
-    }
-
-    function borrarHistorial() {
-      if (confirm("¿Estás seguro de que quieres borrar todo el historial?")) {
-        localStorage.removeItem('historial');
-        mostrarHistorial();
-        playDestruction();
-      }
-    }
-
-    function playDestruction() {
-      destructionSound.play();
-    }
-
-    // Eventos botones
-    btnAgregar.addEventListener('click', () => agregarValor());
-    btnCalcular.addEventListener('click', calcular);
-    btnLimpiar.addEventListener('click', limpiarCampos);
-    btnBorrarHistorial.addEventListener('click', borrarHistorial);
-
-    // Inicialización
-    agregarValor();
-    mostrarHistorial();
-
-  </script>
-  <script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js')
-    .then(reg => console.log('Service Worker registrado:', reg))
-    .catch(err => console.log('Error al registrar SW:', err));
-}
-</script>
 </body>
 </html>
