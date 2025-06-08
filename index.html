@@ -4,14 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <!-- Manifest PWA -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#1976d2">
-<meta name="background-color" content="#00332b">
-<!-- Ícono recomendado solo el real -->
-<link rel="icon" type="image/jpeg" sizes="192x192" href="Icono de calculadora_20250608_150126_0000.jpg">
-<link rel="apple-touch-icon" href="Icono de calculadora_20250608_150126_0000.jpg">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#1976d2">
+  <meta name="background-color" content="#00332b">
+  <!-- Ícono recomendado solo el real -->
+  <link rel="icon" type="image/jpeg" sizes="192x192" href="Icono de calculadora_20250608_150126_0000.jpg">
+  <link rel="apple-touch-icon" href="Icono de calculadora_20250608_150126_0000.jpg">
   <title>Control de Dinero</title>
   <style>
+    /* ... (tu CSS original, sin cambios) ... */
     :root {
       --primary: #40e0d0;
       --secondary: #1de9b6;
@@ -29,19 +30,16 @@
       background: linear-gradient(135deg, #232526, #00332b 90%);
       color: var(--text-light);
     }
-
     h1, h2, h3 {
       text-align: center;
       text-shadow: 0 0 5px var(--primary);
     }
-
     .tabs {
       display: flex;
       justify-content: center;
       gap: 10px;
       margin-bottom: 20px;
     }
-
     .tab-btn {
       padding: 10px 20px;
       font-size: 16px;
@@ -52,16 +50,13 @@
       cursor: pointer;
       transition: background 0.3s, box-shadow 0.3s;
     }
-
     .tab-btn.active {
       background: var(--secondary);
       box-shadow: 0 0 15px var(--secondary);
     }
-
     .tab-btn:hover {
       background: var(--secondary);
     }
-
     .tab-content {
       display: none;
       background: var(--bg-dark);
@@ -69,21 +64,17 @@
       border-radius: 8px;
       box-shadow: 0 0 10px var(--primary) inset;
     }
-
     .tab-content.active {
       display: block;
     }
-
     .campo {
       margin-bottom: 15px;
     }
-
     label {
       display: block;
       margin-bottom: 5px;
       text-shadow: 0 0 4px var(--primary);
     }
-
     input[type="number"], input[type="text"] {
       width: 100%;
       padding: 10px;
@@ -95,32 +86,26 @@
       box-shadow: 0 0 8px var(--primary) inset;
       transition: box-shadow 0.3s;
     }
-
     input[type="number"]:focus, input[type="text"]:focus {
       outline: none;
       box-shadow: 0 0 12px var(--primary) inset;
     }
-
     input.error {
       border: 2px solid var(--error);
     }
-
     .facturas-container {
       display: flex;
       flex-direction: column;
       gap: 10px;
     }
-
     .factura-item {
       display: flex;
       align-items: center;
       gap: 10px;
     }
-
     .factura-item input {
       flex: 1;
     }
-
     button {
       padding: 10px;
       margin-top: 10px;
@@ -134,18 +119,15 @@
       box-shadow: 0 0 10px var(--primary);
       transition: background 0.3s, box-shadow 0.3s;
     }
-
     button:hover {
       background: var(--secondary);
       box-shadow: 0 0 15px var(--secondary);
     }
-
     .delete-btn {
       width: auto;
       padding: 5px 10px;
       font-size: 14px;
     }
-
     #error {
       text-align: center;
       font-weight: bold;
@@ -155,7 +137,6 @@
       text-shadow: 0 0 4px var(--error);
       display: none;
     }
-
     #resultado {
       text-align: center;
       font-weight: bold;
@@ -163,35 +144,30 @@
       margin-top: 15px;
       text-shadow: 0 0 6px var(--primary);
     }
-
     #historial {
       max-height: 300px;
       overflow-y: auto;
       font-size: 0.9em;
       color: var(--text-light);
     }
-
     #historial div {
       margin-bottom: 5px;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-
     .pagination {
       display: flex;
       justify-content: center;
       gap: 10px;
       margin-top: 10px;
     }
-
     .config {
       display: flex;
       justify-content: flex-end;
       gap: 10px;
       margin-bottom: 20px;
     }
-
     .stats {
       margin-top: 20px;
       padding: 10px;
@@ -203,17 +179,14 @@
 </head>
 <body>
   <h1>Control de Dinero</h1>
-
   <div class="config">
     <button id="toggleSonido">🔊 Sonido: Activado</button>
     <button id="toggleTema">🌙 Tema Oscuro</button>
   </div>
-
   <div class="tabs">
     <button class="tab-btn active" data-tab="facturas">Facturas</button>
     <button class="tab-btn" data-tab="historial">Historial</button>
   </div>
-
   <div id="facturas-tab" class="tab-content active">
     <form id="facturaForm" autocomplete="off" onsubmit="return false;">
       <div class="campo">
@@ -236,7 +209,6 @@
     <div id="error" role="alert"></div>
     <h2 id="resultado"></h2>
   </div>
-
   <div id="historial-tab" class="tab-content">
     <h3>Historial:</h3>
     <div class="campo">
@@ -254,7 +226,6 @@
     <button id="btnDescargarHistorial">Descargar CSV</button>
     <button id="btnExportarPDF">Exportar PDF</button>
   </div>
-
   <!-- jsPDF + autoTable -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
@@ -298,7 +269,11 @@
       let currentPage = 1;
       const itemsPerPage = 10;
       let historial = [];
-      const moneda = 'USD';
+
+      // Función para formatear solo números con dos decimales, sin símbolo de moneda
+      function formatCurrency(value) {
+        return Number(value).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      }
 
       // TEMA CLARO/OSCURO
       function cargarTema() {
@@ -407,13 +382,10 @@
       }
 
       function validarEntrada(item) {
+        // Quitamos el campo moneda
         return item && typeof item === 'object' &&
-          ['fecha', 'totalFacturas', 'rebaja', 'total', 'recibido', 'devuelto', 'moneda']
+          ['fecha', 'totalFacturas', 'rebaja', 'total', 'recibido', 'devuelto']
             .every(key => key in item && item[key] !== undefined && item[key] !== null);
-      }
-
-      function formatCurrency(value) {
-        return new Intl.NumberFormat('es-ES', { style: 'currency', currency: moneda }).format(value);
       }
 
       function switchTab(tabId) {
@@ -537,8 +509,7 @@
           rebaja,
           total: totalAjustado,
           recibido,
-          devuelto,
-          moneda
+          devuelto
         });
         saveHistorial();
         limpiarCampos();
@@ -569,7 +540,7 @@
 
         historialDiv.innerHTML = paginatedHistorial.map((item, index) => `
           <div>
-            <span>Transacción ${item.transaccionNum} - <strong>${item.fecha}</strong>: 
+            <span>Transacción ${item.transaccionNum} - <strong>${item.fecha}</strong>:
               Total: ${formatCurrency(item.total)}</span>
             <button class="delete-btn" type="button" onclick="eliminarEntrada(${start + index})">${textos.eliminar}</button>
           </div>
@@ -616,9 +587,9 @@
 
       function descargarHistorial() {
         historial = loadHistorial();
-        let csv = 'Fecha,Total Facturas,Rebaja,Total,Recibido,Devuelto,Moneda\n';
+        let csv = 'Fecha,Total Facturas,Rebaja,Total,Recibido,Devuelto\n';
         historial.forEach(item => {
-          csv += `${item.fecha},${item.totalFacturas},${item.rebaja},${item.total},${item.recibido},${item.devuelto},${item.moneda}\n`;
+          csv += `${item.fecha},${item.totalFacturas},${item.rebaja},${item.total},${item.recibido},${item.devuelto}\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
@@ -641,15 +612,14 @@
         const doc = new jsPDF();
         doc.setFontSize(16);
         doc.text('Historial de Transacciones', 20, 20);
-        const headers = [['Fecha', 'Total Facturas', 'Rebaja', 'Total', 'Recibido', 'Devuelto', 'Moneda']];
+        const headers = [['Fecha', 'Total Facturas', 'Rebaja', 'Total', 'Recibido', 'Devuelto']];
         const data = historial.map(item => [
           item.fecha,
           item.totalFacturas.toFixed(2),
           item.rebaja.toFixed(2),
           item.total.toFixed(2),
           item.recibido.toFixed(2),
-          item.devuelto.toFixed(2),
-          item.moneda
+          item.devuelto.toFixed(2)
         ]);
         if (typeof doc.autoTable === 'function') {
           doc.autoTable({ head: headers, body: data, startY: 30 });
@@ -718,19 +688,18 @@
     });
   </script>
   <!-- Service Worker para funcionalidades PWA -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('service-worker.js')
-      .then(function(reg) {
-        console.log('Service Worker registrado correctamente:', reg.scope);
-      })
-      .catch(function(error) {
-        console.log('Error al registrar Service Worker:', error);
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('service-worker.js')
+        .then(function(reg) {
+          console.log('Service Worker registrado correctamente:', reg.scope);
+        })
+        .catch(function(error) {
+          console.log('Error al registrar Service Worker:', error);
+        });
       });
-    });
-  }
-</script>
-
+    }
+  </script>
 </body>
 </html>
