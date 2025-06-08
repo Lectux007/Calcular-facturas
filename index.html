@@ -90,6 +90,15 @@
 <body>
   <h1>Control de Dinero</h1>
 
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('✔️ Service Worker registrado'))
+      .catch(err => console.log('❌ Error al registrar el Service Worker', err));
+  }
+</script>
+
+
   <div class="campo">
     <label>Valores:</label>
     <div id="valores" class="valores-container"></div>
