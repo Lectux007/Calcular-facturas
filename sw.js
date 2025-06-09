@@ -7,9 +7,10 @@ workbox.precaching.precacheAndRoute([
   {url: "/manifest.json", revision: null},
   {url: "/sw.js", revision: null},
   {url: "/Icono de calculadora_20250608_150126_0000.jpg", revision: null},
-  // Agrega aquí más archivos si los tienes, por ejemplo, CSS, JS, imágenes
+  // Agrega aquí otros archivos si tienes (css, js, imágenes, etc.)
 ]);
 
+// Cacheo de scripts, estilos, imágenes
 workbox.routing.registerRoute(
   ({request}) => request.destination === 'script' ||
                  request.destination === 'style' ||
@@ -20,6 +21,7 @@ workbox.routing.registerRoute(
   })
 );
 
+// Cacheo de páginas HTML
 workbox.routing.registerRoute(
   ({request}) => request.destination === 'document',
   new workbox.strategies.NetworkFirst({
@@ -28,7 +30,7 @@ workbox.routing.registerRoute(
   })
 );
 
-// Actualización inmediata cuando hay cambios
+// Permitir actualización inmediata
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
