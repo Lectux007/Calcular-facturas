@@ -11,9 +11,343 @@
   <link rel="apple-touch-icon" href="Icono de calculadora_20250608_150126_0000.jpg">
   <title>Control de Dinero</title>
   <style>
-    /* ... (todo tu CSS igual que antes) ... */
-    /* (No lo repito aquí para ahorrar espacio, pero no cambió nada.) */
-  </style>
+:root {
+  --primary: #40e0d0;
+  --secondary: #1de9b6;
+  --bg-dark: #00332b;
+  --bg-light: #e0f7fa;
+  --text-dark: #004d40;
+  --text-light: #e0f7fa;
+  --error: #ff4444;
+}
+/* Splash screen moderno y tecnológico */
+#splash {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s;
+  min-height: 100dvh;
+  min-width: 100vw;
+  overflow: hidden;
+  background: transparent;
+}
+#splash:not(.splash-visible) {
+  opacity: 0;
+  pointer-events: none;
+}
+.splash-animated-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(120deg, #0f2027 0%, #2c5364 60%, #8f94fb 100%);
+  animation: splashGradientMove 6s linear infinite alternate;
+  filter: blur(2px) brightness(0.85);
+}
+@keyframes splashGradientMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.splash-animated-bg::after {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(120deg, rgba(126,255,255,0.12) 0 1px, transparent 1px 20px),
+    repeating-linear-gradient(60deg, rgba(255,0,255,0.08) 0 1px, transparent 1px 30px);
+  opacity: 0.7;
+  animation: splashLinesMove 12s linear infinite;
+}
+@keyframes splashLinesMove {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 80px 160px, 160px 80px; }
+}
+.splash-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  background: rgba(16, 18, 44, 0.75);
+  padding: 40px 28px;
+  border-radius: 22px;
+  box-shadow:
+    0 2px 24px #8f94fb88,
+    0 0 24px #00ffe5cc,
+    0 0 120px #a770ef55 inset;
+  backdrop-filter: blur(8px);
+  animation: splash-in 1.1s cubic-bezier(.56,.12,.37,1.2);
+}
+.splash-content h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  text-shadow: 0 0 24px #8f94fb, 0 0 12px #00ffe5, 0 0 2px #fff;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+.splash-content p {
+  font-size: 1.15em;
+  margin-bottom: 1.5em;
+  letter-spacing: 0.5px;
+  color: #c6f0ff;
+}
+.splash-content button {
+  font-size: 1.15em;
+  font-weight: bold;
+  padding: 14px 48px;
+  background: linear-gradient(90deg, #00ffe5 10%, #8f94fb 90%);
+  color: #10122c;
+  border: none;
+  border-radius: 100px;
+  box-shadow:
+    0 0 18px #00ffe5cc,
+    0 0 40px #8f94fb55 inset;
+  cursor: pointer;
+  transition: background 0.20s, color 0.20s, box-shadow 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.splash-content button::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 10%;
+  top: 0;
+  width: 80%;
+  height: 40%;
+  background: linear-gradient(90deg, #fff8, #8f94fb44 70%, transparent 100%);
+  opacity: 0.15;
+  filter: blur(2px);
+  pointer-events: none;
+}
+.splash-content button:hover {
+  background: linear-gradient(90deg, #a770ef, #00ffe5 80%);
+  color: #fff;
+  box-shadow:
+    0 0 32px #a770efcc,
+    0 0 80px #00ffe5aa inset;
+}
+@keyframes splash-in {
+  from { transform: scale(0.7) translateY(50px); opacity: 0;}
+  to { transform: scale(1) translateY(0); opacity: 1;}
+}
+/** Fin splash **/
+
+body[data-theme="light"] {
+  background: linear-gradient(135deg, #0fffc1, var(--bg-dark));
+  color: var(--text-light);
+}
+body[data-theme="dark"] {
+  background: linear-gradient(135deg, #232526, #00332b 90%);
+  color: var(--text-light);
+}
+
+h1, h2, h3 {
+  text-align: center;
+  text-shadow: 0 0 5px var(--primary);
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  background: var(--primary);
+  border: none;
+  border-radius: 8px 8px 0 0;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+.tab-btn.active {
+  background: var(--secondary);
+  box-shadow: 0 0 15px var(--secondary);
+}
+
+.tab-btn:hover {
+  background: var(--secondary);
+}
+
+.tab-content {
+  display: none;
+  background: var(--bg-dark);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px var(--primary) inset;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.campo {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  text-shadow: 0 0 4px var(--primary);
+}
+
+input[type="number"], input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  background: var(--bg-dark);
+  color: var(--text-light);
+  box-shadow: 0 0 8px var(--primary) inset;
+  transition: box-shadow 0.3s;
+}
+
+input[type="number"]:focus, input[type="text"]:focus {
+  outline: none;
+  box-shadow: 0 0 12px var(--primary) inset;
+}
+
+input.error {
+  border: 2px solid var(--error);
+}
+
+.facturas-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.factura-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.factura-item input {
+  flex: 1;
+}
+
+button {
+  padding: 10px;
+  margin-top: 10px;
+  width: 100%;
+  font-size: 16px;
+  background: var(--primary);
+  border: none;
+  border-radius: 8px;
+  color: var(--text-dark);
+  cursor: pointer;
+  box-shadow: 0 0 10px var(--primary);
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+button:hover {
+  background: var(--secondary);
+  box-shadow: 0 0 15px var(--secondary);
+}
+
+.delete-btn {
+  width: auto;
+  padding: 5px 10px;
+  font-size: 14px;
+}
+
+#error {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.2em;
+  margin-top: 10px;
+  color: var(--error);
+  text-shadow: 0 0 4px var(--error);
+  display: none;
+}
+
+#resultado {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.4em;
+  margin-top: 15px;
+  text-shadow: 0 0 6px var(--primary);
+}
+
+#historial {
+  max-height: 300px;
+  overflow-y: auto;
+  font-size: 0.9em;
+  color: var(--text-light);
+}
+
+#historial div {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.config {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.stats {
+  margin-top: 20px;
+  padding: 10px;
+  background: var(--bg-dark);
+  border-radius: 8px;
+  text-align: center;
+}
+/* Animación de guardado y borrado */
+.feedback {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg,#00ffe5,#8f94fb 80%);
+  color: #10122c;
+  font-weight: bold;
+  padding: 12px 30px;
+  border-radius: 100px;
+  box-shadow: 0 0 18px #00ffe5cc;
+  z-index: 9999;
+  font-size: 1.1em;
+  animation: feedbackfade 2.6s forwards;
+  opacity: 0.98;
+  pointer-events: none;
+}
+@keyframes feedbackfade {
+  0% { opacity: 0; transform: translateX(-50%) scale(0.7);}
+  10% { opacity: 1; transform: translateX(-50%) scale(1);}
+  70% { opacity: 1;}
+  100% { opacity: 0; transform: translateX(-50%) scale(0.7);}
+}
+/* Accesibilidad: focus visible */
+button:focus-visible, input:focus-visible {
+  outline: 3px solid #a770ef;
+  outline-offset: 2px;
+}
+/* Campo de error accesible */
+input.error:focus-visible {
+  outline: 3px solid #ff4444;
+}
+</style>
 </head>
 <body>
   <!-- Splash de bienvenida moderno -->
