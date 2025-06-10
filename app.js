@@ -327,39 +327,38 @@ document.addEventListener('DOMContentLoaded', () => {
   facturasContainer.addEventListener('input', guardarFormularioTemporal);
 
   function guardarHistorial() {
-    const suma = obtenerSumaFacturas();
-    if (suma === null || suma.totalFacturas === 0) {
-      errorDiv.style.display = 'block';
-      errorDiv.textContent = textos.errorFacturas;
-      playError();
-      return;
-    }
-    const { totalFacturas, rebaja } = suma;
-    const totalAjustado = totalFacturas - rebaja;
-    const recibido = parseFloat(dineroRecibido.value) || 0;
-    const devuelto = recibido - totalAjustado;
-    const fecha = new Date().toLocaleString();
-    const fechaObj = new Date();
-const fecha = fechaObj.toLocaleString();
-const fechaISO = fechaObj.toISOString().slice(0, 10); // "YYYY-MM-DD"
-historial.unshift({
-  fecha,
-  fechaISO,
-  transaccionNum: historial.filter(i => (i.fechaISO === fechaISO)).length + 1,
-  totalFacturas,
-  rebaja,
-  total: totalAjustado,
-  recibido,
-  devuelto
-});
-    saveHistorial();
-    limpiarCampos();
-    localStorage.removeItem(FORM_STATE_KEY); // limpiar temporal
-    switchTab('historial');
-    mostrarHistorial();
-    playBeep();
-    feedback(textos.guardar);
+  const suma = obtenerSumaFacturas();
+  if (suma === null || suma.totalFacturas === 0) {
+    errorDiv.style.display = 'block';
+    errorDiv.textContent = textos.errorFacturas;
+    playError();
+    return;
   }
+  const { totalFacturas, rebaja } = suma;
+  const totalAjustado = totalFacturas - rebaja;
+  const recibido = parseFloat(dineroRecibido.value) || 0;
+  const devuelto = recibido - totalAjustado;
+  const fechaObj = new Date();
+  const fecha = fechaObj.toLocaleString();
+  const fechaISO = fechaObj.toISOString().slice(0, 10); // "YYYY-MM-DD"
+  historial.unshift({
+    fecha,
+    fechaISO,
+    transaccionNum: historial.filter(i => (i.fechaISO === fechaISO)).length + 1,
+    totalFacturas,
+    rebaja,
+    total: totalAjustado,
+    recibido,
+    devuelto
+  });
+  saveHistorial();
+  limpiarCampos();
+  localStorage.removeItem(FORM_STATE_KEY); // limpiar temporal
+  switchTab('historial');
+  mostrarHistorial();
+  playBeep();
+  feedback(textos.guardar);
+}
 
   function limpiarCampos() {
     facturasContainer.innerHTML = '';
