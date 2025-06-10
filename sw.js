@@ -2,11 +2,14 @@ importScripts("https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox
 
 workbox.core.setCacheNameDetails({prefix: "control-dinero"});
 workbox.precaching.precacheAndRoute([
-  {url: "/", revision: null},
-  {url: "/index.html", revision: null},
-  {url: "/manifest.json", revision: null},
-  {url: "/sw.js", revision: null},
-  {url: "/Icono de calculadora_20250608_150126_0000.jpg", revision: null},
+  {url: "/Calcular-facturas/", revision: null},
+  {url: "/Calcular-facturas/index.html", revision: null},
+  {url: "/Calcular-facturas/manifest.json", revision: null},
+  {url: "/Calcular-facturas/sw.js", revision: null},
+  {url: "/Calcular-facturas/app.js", revision: null},
+  {url: "/Calcular-facturas/styles.css", revision: null},
+  {url: "/Calcular-facturas/icono-calculadora.png", revision: null},
+  {url: "https://cdn.jsdelivr.net/npm/chart.js", revision: null}
   // Agrega aquí otros archivos si tienes (css, js, imágenes, etc.)
 ]);
 
