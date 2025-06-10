@@ -339,15 +339,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const recibido = parseFloat(dineroRecibido.value) || 0;
     const devuelto = recibido - totalAjustado;
     const fecha = new Date().toLocaleString();
-    historial.unshift({
-      fecha,
-      transaccionNum: historial.filter(i => i.fecha.split(',')[0] === fecha.split(',')[0]).length + 1,
-      totalFacturas,
-      rebaja,
-      total: totalAjustado,
-      recibido,
-      devuelto
-    });
+    const fechaObj = new Date();
+const fecha = fechaObj.toLocaleString();
+const fechaISO = fechaObj.toISOString().slice(0, 10); // "YYYY-MM-DD"
+historial.unshift({
+  fecha,
+  fechaISO,
+  transaccionNum: historial.filter(i => (i.fechaISO === fechaISO)).length + 1,
+  totalFacturas,
+  rebaja,
+  total: totalAjustado,
+  recibido,
+  devuelto
+});
     saveHistorial();
     limpiarCampos();
     localStorage.removeItem(FORM_STATE_KEY); // limpiar temporal
@@ -372,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function mostrarHistorial(page = 1) {
     historial = loadHistorial();
     const filteredHistorial = filtroFecha.value
-      ? historial.filter(item => item.fecha.startsWith(filtroFecha.value))
+      ? historial.filter(item => item.fechaISO === filtroFecha.value)
       : historial;
 
     const start = (page - 1) * itemsPerPage;
