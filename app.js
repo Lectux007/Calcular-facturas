@@ -535,6 +535,63 @@ document.addEventListener('DOMContentLoaded', () => {
   switchTab('facturas');
 });
 
+// === GRAFICA RESUMEN ===
+function actualizarGraficaResumen(historialFiltrado) {
+  const canvas = document.getElementById('graficaResumen');
+  if (!canvas) return;
+  // Agrupa los totales por fechaISO
+  const agrupado = {};
+  historialFiltrado.forEach(item => {
+    agrupado[item.fechaISO] = (agrupado[item.fechaISO] || 0) + item.total;
+  });
+  const labels = Object.keys(agrupado);
+  const data = Object.values(agrupado);
+
+  // Destruye el gráfico anterior si existe
+  if (window.graficaResumenChart) {
+    window.graficaResumenChart.destroy();
+  }
+
+  // Si no hay datos, limpia el canvas
+  if (data.length === 0) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    return;
+  }
+
+  window.graficaResumenChart = new Chart(canvas.getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Total por día',
+        data,
+        backgroundColor: '#1976d2'
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: 'Resumen diario de totales'
+        }
+      },
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: {
+            callback: function(value) {
+              return typeof formatCurrency === 'function' ? formatCurrency(value) : value;
+            }
+          }
+        }
+      }
+    }
+  });
+}
+
 // === BANNER DE ACTUALIZACIÓN ===
 if ('serviceWorker' in navigator) {
   let newWorker;
