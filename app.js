@@ -400,6 +400,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nextPage.disabled = end >= filteredHistorial.length;
 
     actualizarEstadisticas(filteredHistorial);
+  actualizarGraficaResumen(filteredHistorial);
   }
 
   function actualizarEstadisticas(historialFiltrado) {
