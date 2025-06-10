@@ -8,7 +8,7 @@ workbox.precaching.precacheAndRoute([
   {url: "/Calcular-facturas/sw.js", revision: null},
   {url: "/Calcular-facturas/app.js", revision: null},
   {url: "/Calcular-facturas/styles.css", revision: null},
-  {url: "/Calcular-facturas/icono-calculadora.png", revision: null},
+  {url: "/Calcular-facturas/Icono de calculadora_20250608_150126_0000.jpg", revision: null},
   {url: "https://cdn.jsdelivr.net/npm/chart.js", revision: null}
   // Agrega aquí otros archivos si tienes (css, js, imágenes, etc.)
 ]);
