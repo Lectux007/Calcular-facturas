@@ -1,39 +1,46 @@
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js");
+importScripts("https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js"); 
 
-workbox.core.setCacheNameDetails({prefix: "control-dinero"});
+// Configuración básica del caché
+workbox.core.setCacheNameDetails({
+  prefix: "control-dinero",
+  suffix: "v2"
+});
+
+// Precache archivos esenciales (relativas)
 workbox.precaching.precacheAndRoute([
-  {url: "/Calcular-facturas/", revision: null},
-  {url: "/Calcular-facturas/index.html", revision: null},
-  {url: "/Calcular-facturas/manifest.json", revision: null},
-  {url: "/Calcular-facturas/sw.js", revision: null},
-  {url: "/Calcular-facturas/app.js", revision: null},
-  {url: "/Calcular-facturas/styles.css", revision: null},
-  {url: "/Calcular-facturas/Icono de calculadora_20250608_150126_0000.jpg", revision: null},
-  {url: "https://cdn.jsdelivr.net/npm/chart.js", revision: null}
-  // Agrega aquí otros archivos si tienes (css, js, imágenes, etc.)
+  { url: "./", revision: null },
+  { url: "./index.html", revision: null },
+  { url: "./manifest.json", revision: null },
+  { url: "./app.js", revision: null },
+  { url: "./style.css", revision: null },
+  { url: "./Icono de calculadora_20250608_150126_0000.jpg", revision: null },
+  { url: "./chart.min.js", revision: null },          // Chart.js local
+  { url: "./jspdf.umd.min.js", revision: null },     // jsPDF local
+  { url: "./jspdf.plugin.autotable.min.js", revision: null } // autoTable local
 ]);
 
-// Cacheo de scripts, estilos, imágenes
+// Estrategia para recursos estáticos (JS, CSS, IMG)
 workbox.routing.registerRoute(
-  ({request}) => request.destination === 'script' ||
-                 request.destination === 'style' ||
-                 request.destination === 'image',
+  ({ request }) =>
+    request.destination === 'script' ||
+    request.destination === 'style' ||
+    request.destination === 'image',
   new workbox.strategies.CacheFirst({
     cacheName: 'static-resources',
-    plugins: [new workbox.expiration.ExpirationPlugin({maxEntries: 50})]
+    plugins: [new workbox.expiration.ExpirationPlugin({ maxEntries: 50, purgeOnQuotaError: true })]
   })
 );
 
-// Cacheo de páginas HTML
+// Estrategia para documentos HTML
 workbox.routing.registerRoute(
-  ({request}) => request.destination === 'document',
+  ({ request }) => request.destination === 'document',
   new workbox.strategies.NetworkFirst({
     cacheName: 'pages',
-    plugins: [new workbox.expiration.ExpirationPlugin({maxEntries: 10})]
+    plugins: [new workbox.expiration.ExpirationPlugin({ maxEntries: 10, purgeOnQuotaError: true })]
   })
 );
 
-// Permitir actualización inmediata
+// Manejo de mensajes para actualizar sin recargar
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
