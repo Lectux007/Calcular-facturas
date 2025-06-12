@@ -3,13 +3,28 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+  <!-- Título -->
+  <title>Control de Dinero</title>
+
   <!-- Manifest PWA -->
   <link rel="manifest" href="./manifest.json">
+  
+  <!-- Meta Theme Color -->
   <meta name="theme-color" content="#1976d2">
-  <meta name="background-color" content="#00332b">
+
+  <!-- Iconos para dispositivos -->
   <link rel="icon" type="image/png" sizes="192x192" href="./icono.png">
-  <link rel="apple-touch-icon" href="./Icono de calculadora_20250608_150126_0000.jpg">
-  <title>Control de Dinero</title>
+  <link rel="apple-touch-icon" href="./icono.png">
+  
+  <!-- Capacidades móviles -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Facturas">
+
+  <!-- Estilos -->
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
@@ -75,26 +90,62 @@
       <button id="nextPage">Siguiente</button>
     </div>
     <div class="stats" id="estadisticas"></div>
-    <button id="btnBorrarHistorial">Borrar historial</button>
     <canvas id="graficaResumen" style="max-width:500px;margin:20px auto 30px auto;display:block;"></canvas>
+    <button id="btnBorrarHistorial">Borrar historial</button>
     <button id="btnDescargarHistorial">Descargar CSV</button>
     <button id="btnExportarPDF">Exportar PDF</button>
-    
   </div>
 
-  <!-- jsPDF + autoTable -->
+  <!-- Librerías externas -->
   <script src="./chart.min.js"></script>
-<script src="./jspdf.umd.min.js"></script>
-<script src="./jspdf.plugin.autotable.min.js"></script>
+  <script src="./jspdf.umd.min.js"></script>
+  <script src="./jspdf.plugin.autotable.min.js"></script>
+
+  <!-- Aplicación principal -->
   <script src="./app.js"></script>
+
+  <!-- Registro del Service Worker -->
   <script>
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", function() {
-    navigator.serviceWorker.register("./sw.js")
-      .then(reg => console.log("SW registrado", reg))
-      .catch(err => console.error("SW fallo", err));
-  });
-}
-</script>
+    // Registro del service worker
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./se.js")
+          .then(reg => console.log("Service Worker registrado:", reg))
+          .catch(err => console.error("Error al registrar el Service Worker:", err));
+      });
+    }
+
+    // Opcional: Botón de instalación personalizado
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      const installBtn = document.createElement('button');
+      installBtn.textContent = 'Instalar App';
+      installBtn.style.position = 'fixed';
+      installBtn.style.bottom = '10px';
+      installBtn.style.right = '10px';
+      installBtn.style.zIndex = '1000';
+      installBtn.style.padding = '10px 15px';
+      installBtn.style.backgroundColor = '#1976d2';
+      installBtn.color = 'white';
+      installBtn.border = 'none';
+      installBtn.borderRadius = '5px';
+      installBtn.cursor = 'pointer';
+
+      installBtn.addEventListener('click', () => {
+        if (deferredPrompt) {
+          deferredPrompt.prompt();
+          deferredPrompt.userChoice.then(() => {
+            deferredPrompt = null;
+            installBtn.remove();
+          });
+        }
+      });
+
+      document.body.appendChild(installBtn);
+    });
+  </script>
 </body>
 </html>
