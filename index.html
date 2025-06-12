@@ -9,15 +9,15 @@
   <title>Control de Dinero</title>
 
   <!-- Manifest PWA -->
-  <link rel="manifest" href="./manifest.json">
-  
+  <link rel="manifest" href="./manifiesto.json">
+
   <!-- Meta Theme Color -->
   <meta name="theme-color" content="#1976d2">
 
   <!-- Iconos para dispositivos -->
   <link rel="icon" type="image/png" sizes="192x192" href="./icono.png">
   <link rel="apple-touch-icon" href="./icono.png">
-  
+
   <!-- Capacidades móviles -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -25,7 +25,7 @@
   <meta name="apple-mobile-web-app-title" content="Facturas">
 
   <!-- Estilos -->
-  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./estilo.css">
 </head>
 <body>
   <!-- Splash de bienvenida moderno -->
@@ -97,49 +97,57 @@
   </div>
 
   <!-- Librerías externas -->
-  <script src="./chart.min.js"></script>
+  <script src="./gráfico.min.js"></script>
   <script src="./jspdf.umd.min.js"></script>
   <script src="./jspdf.plugin.autotable.min.js"></script>
 
   <!-- Aplicación principal -->
-  <script src="./app.js"></script>
+  <script src="./aplicación.js"></script>
 
   <!-- Registro del Service Worker -->
   <script>
     // Registro del service worker
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", function () {
-        navigator.serviceWorker.register("./se.js")
+        navigator.serviceWorker.register("./sw.js")
           .then(reg => console.log("Service Worker registrado:", reg))
           .catch(err => console.error("Error al registrar el Service Worker:", err));
       });
     }
 
-    // Opcional: Botón de instalación personalizado
+    // Botón de instalación personalizado
     let deferredPrompt;
 
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
+
       const installBtn = document.createElement('button');
-      installBtn.textContent = 'Instalar App';
-      installBtn.style.position = 'fixed';
-      installBtn.style.bottom = '10px';
-      installBtn.style.right = '10px';
-      installBtn.style.zIndex = '1000';
-      installBtn.style.padding = '10px 15px';
-      installBtn.style.backgroundColor = '#1976d2';
-      installBtn.color = 'white';
-      installBtn.border = 'none';
-      installBtn.borderRadius = '5px';
-      installBtn.cursor = 'pointer';
+      installBtn.textContent = '📲 Instalar App';
+      Object.assign(installBtn.style, {
+        position: 'fixed',
+        bottom: '1rem',
+        right: '1rem',
+        zIndex: '10000',
+        padding: '0.75rem 1rem',
+        backgroundColor: '#1976d2',
+        color: '#fff',
+        border: 'none',
+        borderRadius: '8px',
+        fontSize: '1rem',
+        fontWeight: 'bold',
+        cursor: 'pointer',
+        boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+        transition: 'transform 0.2s ease, opacity 0.3s ease'
+      });
 
       installBtn.addEventListener('click', () => {
         if (deferredPrompt) {
-          deferredPrompt.prompt();
+          deferredPrompt.prompt(); // Mostrar prompt de instalación
           deferredPrompt.userChoice.then(() => {
             deferredPrompt = null;
-            installBtn.remove();
+            installBtn.style.opacity = '0';
+            setTimeout(() => installBtn.remove(), 300);
           });
         }
       });
