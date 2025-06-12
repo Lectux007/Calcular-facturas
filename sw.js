@@ -1,4 +1,4 @@
-importScripts("https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js"); 
+importScripts("https://unpkg.com/workbox-sw@6.5.4/build/workbox-sw.min.js"); 
 
 // Configuración básica del caché
 workbox.core.setCacheNameDetails({
@@ -6,17 +6,17 @@ workbox.core.setCacheNameDetails({
   suffix: "v2"
 });
 
-// Precache archivos esenciales (relativas)
+// Precache archivos esenciales
 workbox.precaching.precacheAndRoute([
   { url: "./", revision: null },
   { url: "./index.html", revision: null },
   { url: "./manifest.json", revision: null },
   { url: "./app.js", revision: null },
   { url: "./style.css", revision: null },
-  { url: "./Icono de calculadora_20250608_150126_0000.jpg", revision: null },
-  { url: "./chart.min.js", revision: null },          // Chart.js local
-  { url: "./jspdf.umd.min.js", revision: null },     // jsPDF local
-  { url: "./jspdf.plugin.autotable.min.js", revision: null } // autoTable local
+  { url: "./icono.png", revision: null },
+  { url: "./chart.min.js", revision: null },
+  { url: "./jspdf.umd.min.js", revision: null },
+  { url: "./jspdf.plugin.autotable.min.js", revision: null }
 ]);
 
 // Estrategia para recursos estáticos (JS, CSS, IMG)
