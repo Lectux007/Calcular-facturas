@@ -1,14 +1,25 @@
+function formatCurrency(value) {
+  return Number(value).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  // Splash screen behavior
   const splash = document.getElementById('splash');
   const entrarApp = document.getElementById('entrarApp');
 
   function ocultarSplash() {
-    splash.classList.remove('splash-visible');
-    setTimeout(() => { splash.style.display = 'none'; }, 800);
+    if (splash) {
+      splash.classList.remove('splash-visible');
+      setTimeout(() => {
+        splash.style.display = 'none';
+      }, 800);
+    }
   }
 
-  entrarApp.addEventListener('click', ocultarSplash);
-  setTimeout(ocultarSplash, 6000); // 6 segundos
+  if (entrarApp && splash) {
+    entrarApp.addEventListener('click', ocultarSplash);
+    setTimeout(ocultarSplash, 6000); // 6 segundos
+  }
 
   const { jsPDF } = window.jspdf;
   const facturasContainer = document.getElementById('facturas');
@@ -85,16 +96,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Feedback visual animado
   function feedback(msg) {
-    feedbackDiv.textContent = msg;
-    feedbackDiv.style.display = 'block';
-    feedbackDiv.className = 'feedback';
-    setTimeout(() => {
-      feedbackDiv.style.display = 'none';
-    }, 2500);
-  }
-
-  function formatCurrency(value) {
-    return Number(value).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (feedbackDiv) {
+      feedbackDiv.textContent = msg;
+      feedbackDiv.style.display = 'block';
+      feedbackDiv.className = 'feedback';
+      setTimeout(() => {
+        feedbackDiv.style.display = 'none';
+      }, 2500);
+    }
   }
 
   function cargarTema() {
@@ -307,11 +316,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalAjustado = totalFacturas - rebaja;
     const recibido = parseFloat(dineroRecibido.value) || 0;
     const devuelto = recibido - totalAjustado;
+
+    // Mostrar "Dinero a recibir" si es negativo
+    let mensajeDinero = '';
+    if (devuelto < 0) {
+      mensajeDinero = `<span style="color:#ff4444;">Dinero a recibir: ${formatCurrency(Math.abs(devuelto))}</span>`;
+    } else {
+      mensajeDinero = `Dinero a devolver: ${formatCurrency(devuelto)}`;
+    }
+
     resultado.innerHTML = `
       Total Facturas: ${formatCurrency(totalFacturas)}<br>
       Rebaja: ${formatCurrency(rebaja)}<br>
       Total Ajustado: ${formatCurrency(totalAjustado)}<br>
-      Dinero devuelto: ${formatCurrency(devuelto)}
+      ${mensajeDinero}
     `;
   }
 
@@ -375,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function mostrarHistorial(page = 1) {
     historial = loadHistorial();
-    const filteredHistorial = filtroFecha.value
+    const filteredHistorial = filtroFecha?.value
       ? historial.filter(item => item.fechaISO === filtroFecha.value)
       : historial;
 
@@ -383,28 +401,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const end = start + itemsPerPage;
     const paginatedHistorial = filteredHistorial.slice(start, end);
 
-    historialDiv.innerHTML = paginatedHistorial.map((item, index) => `
-      <div>
-        <span>Transacción ${item.transaccionNum} - <strong>${item.fecha}</strong>: Total: ${formatCurrency(item.total)}</span>
-        <button class="delete-btn" type="button" onclick="eliminarEntrada(${start + index})">${textos.eliminar}</button>
-      </div>
-    `).join('');
+    if (historialDiv) {
+      historialDiv.innerHTML = paginatedHistorial.map((item, index) => `
+        <div>
+          <span>Transacción ${item.transaccionNum} - <strong>${item.fecha}</strong>: Total: ${formatCurrency(item.total)}</span>
+          <button class="delete-btn" type="button" onclick="eliminarEntrada(${start + index})">${textos.eliminar}</button>
+        </div>
+      `).join('');
 
-    if (paginatedHistorial.length === 0) {
-      historialDiv.innerHTML = `<p>${textos.sinTransacciones}</p>`;
+      if (paginatedHistorial.length === 0) {
+        historialDiv.innerHTML = `<p>${textos.sinTransacciones}</p>`;
+      }
     }
 
-    currentPage = page;
-    pageInfo.textContent = `Página ${page} de ${Math.max(1, Math.ceil(filteredHistorial.length / itemsPerPage))}`;
-    prevPage.disabled = page === 1;
-    nextPage.disabled = end >= filteredHistorial.length;
+    if (pageInfo) {
+      pageInfo.textContent = `Página ${page} de ${Math.max(1, Math.ceil(filteredHistorial.length / itemsPerPage))}`;
+    }
+
+    if (prevPage) prevPage.disabled = page === 1;
+    if (nextPage) nextPage.disabled = end >= filteredHistorial.length;
 
     actualizarEstadisticas(filteredHistorial);
     actualizarGraficaResumen(filteredHistorial);
   }
 
   function actualizarEstadisticas(historialFiltrado) {
-    if (!historialFiltrado || historialFiltrado.length === 0) {
+    if (!estadisticas || !historialFiltrado || historialFiltrado.length === 0) {
       estadisticas.textContent = '';
       return;
     }
@@ -477,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]);
     if (typeof doc.autoTable === 'function') {
       doc.autoTable({ head: headers, body: data, startY: 30 });
-      doc.save(`historial_transacciones_${new Date().toISOString().split('T')[0]}.pdf`);
+      doc.save(`historial_transacciones_${new Date().toISOString().split('Tema')[0]}.pdf`);
       playBeep();
       feedback('Historial PDF generado');
     } else {
@@ -504,33 +526,35 @@ document.addEventListener('DOMContentLoaded', () => {
     feedback(`Sonido ${sonidoHabilitado ? 'activado' : 'desactivado'}`);
   });
 
-  filtroFecha.addEventListener('input', () => {
+  filtroFecha?.addEventListener('input', () => {
     currentPage = 1;
     mostrarHistorial();
   });
 
-  prevPage.addEventListener('click', () => {
+  prevPage?.addEventListener('click', () => {
     if (currentPage > 1) mostrarHistorial(currentPage - 1);
   });
 
-  nextPage.addEventListener('click', () => {
+  nextPage?.addEventListener('click', () => {
     mostrarHistorial(currentPage + 1);
   });
 
-  tabButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+  if (tabButtons && tabButtons.length > 0) {
+    tabButtons.forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
+  }
 
-  btnAgregar.addEventListener('click', () => {
+  btnAgregar?.addEventListener('click', () => {
     agregarFactura();
     guardarFormularioTemporal();
   });
 
-  btnGuardar.addEventListener('click', guardarHistorial);
-  btnLimpiar.addEventListener('click', limpiarCampos);
-  btnAplicarRebaja.addEventListener('click', calcularAutomatico);
-  document.getElementById('btnBorrarHistorial').addEventListener('click', borrarHistorial);
-  document.getElementById('btnDescargarHistorial').addEventListener('click', descargarHistorial);
-  document.getElementById('btnExportarPDF').addEventListener('click', exportarHistorialPDF);
-  facturaForm.addEventListener('submit', e => {
+  btnGuardar?.addEventListener('click', guardarHistorial);
+  btnLimpiar?.addEventListener('click', limpiarCampos);
+  btnAplicarRebaja?.addEventListener('click', calcularAutomatico);
+  document.getElementById('btnBorrarHistorial')?.addEventListener('click', borrarHistorial);
+  document.getElementById('btnDescargarHistorial')?.addEventListener('click', descargarHistorial);
+  document.getElementById('btnExportarPDF')?.addEventListener('click', exportarHistorialPDF);
+  facturaForm?.addEventListener('submit', e => {
     e.preventDefault();
     guardarHistorial();
   });
