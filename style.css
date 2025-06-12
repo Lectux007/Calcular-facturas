@@ -1,3 +1,4 @@
+/* Variables globales */
 :root {
   --primary: #1976d2; /* Azul principal */
   --secondary: #40e0d0; /* Turquesa secundario */
@@ -6,11 +7,10 @@
   --text-dark: #00332b;
   --text-light: #e0f7fa;
   --error: #ff4444;
-
   --transition-speed: 0.3s;
 }
 
-/* Splash screen moderno y tecnológico */
+/* Splash screen */
 #splash {
   position: fixed;
   z-index: 9999;
@@ -66,7 +66,7 @@
   position: relative;
   z-index: 2;
   text-align: center;
-  color: #fff;
+  color: white;
   background: rgba(16, 18, 44, 0.85);
   padding: 40px 28px;
   border-radius: 22px;
@@ -81,7 +81,6 @@
 .splash-content h1 {
   font-size: 2.5em;
   margin-bottom: 0.5em;
-  text-shadow: 0 0 24px #8f94fb, 0 0 12px #00ffe5, 0 0 2px #fff;
   letter-spacing: 1px;
   font-weight: 700;
 }
@@ -101,48 +100,36 @@
   color: #10122c;
   border: none;
   border-radius: 100px;
-  box-shadow:
-    0 0 18px #00ffe5cc,
-    0 0 40px #8f94fb55 inset;
+  box-shadow: 0 0 18px #00ffe5cc, 0 0 40px #8f94fb55 inset;
   cursor: pointer;
   transition: background var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
-  position: relative;
-  overflow: hidden;
-}
-
-.splash-content button::after {
-  content: "";
-  display: block;
-  position: absolute;
-  left: 10%;
-  top: 0;
-  width: 80%;
-  height: 40%;
-  background: linear-gradient(90deg, #fff8, #8f94fb44 70%, transparent 100%);
-  opacity: 0.15;
-  filter: blur(2px);
-  pointer-events: none;
 }
 
 .splash-content button:hover {
   background: linear-gradient(90deg, #a770ef, #00ffe5 80%);
-  color: #fff;
-  box-shadow:
-    0 0 32px #a770efcc,
-    0 0 80px #00ffe5aa inset;
+  color: white;
+  box-shadow: 0 0 32px #a770efcc, 0 0 80px #00ffe5aa inset;
 }
 
-@keyframes splash-in {
-  from { transform: scale(0.7) translateY(50px); opacity: 0;}
-  to { transform: scale(1) translateY(0); opacity: 1;}
+/* Cuerpo general */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background: var(--bg-dark);
+  transition: background var(--transition-speed), color var(--transition-speed);
 }
 
-/* Cuerpo del sitio */
+/* Modo claro */
 body[data-theme="light"] {
   background: var(--bg-light);
   color: var(--text-dark);
 }
 
+/* Modo oscuro */
 body[data-theme="dark"] {
   background: linear-gradient(135deg, #0f2027, #2c5364);
   color: var(--text-light);
@@ -253,13 +240,13 @@ button {
   border-radius: 8px;
   color: var(--text-dark);
   cursor: pointer;
-  box-shadow: 0 0 10px var(--primary);
+  box-shadow: 0 0 10px var(--primary) inset;
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
 }
 
 button:hover {
   background: var(--secondary);
-  box-shadow: 0 0 15px var(--secondary);
+  box-shadow: 0 0 15px var(--secondary) inset;
 }
 
 .delete-btn {
@@ -292,7 +279,6 @@ button:hover {
   font-size: 0.9em;
   color: var(--text-light);
 }
-
 #historial div {
   margin-bottom: 5px;
   display: flex;
@@ -327,7 +313,7 @@ button:hover {
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(90deg, #00ffe5, #8f94fb 80%);
+  background: linear-gradient(90deg,#00ffe5,#8f94fb 80%);
   color: #10122c;
   font-weight: bold;
   padding: 12px 30px;
@@ -352,7 +338,6 @@ input:focus-visible {
   outline: 3px solid #a770ef;
   outline-offset: 2px;
 }
-
 input.error:focus-visible {
   outline: 3px solid var(--error);
 }
