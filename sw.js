@@ -1,6 +1,6 @@
 importScripts("https://unpkg.com/workbox-sw@6.5.4/build/workbox-sw.min.js"); 
 
-// Configuración básica del caché
+// Configuración del nombre del caché
 workbox.core.setCacheNameDetails({
   prefix: "control-dinero",
   suffix: "v2"
