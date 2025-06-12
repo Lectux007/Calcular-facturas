@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // Splash screen behavior
   const splash = document.getElementById('splash');
   const entrarApp = document.getElementById('entrarApp');
 
@@ -54,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const itemsPerPage = 10;
   let historial = [];
 
-  // -- BLOQUE DE GUARDADO Y RESTAURACIÓN DE FORMULARIO --
+  // -- BLOQUE DE GUARDADO Y RESTAURACIÓN --
   const FORM_STATE_KEY = 'formularioTemporal';
 
   function guardarFormularioTemporal() {
@@ -69,9 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!datos) return;
     try {
       const { facturas, recibido, rebaja } = JSON.parse(datos);
-      // Limpiar facturas existentes
       facturasContainer.innerHTML = '';
-      // Restaurar cada factura
       if (facturas && facturas.length) {
         facturas.forEach(val => agregarFactura(val));
       } else {
@@ -310,23 +307,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalAjustado = totalFacturas - rebaja;
     const recibido = parseFloat(dineroRecibido.value) || 0;
     const devuelto = recibido - totalAjustado;
-
-    let mensajeDinero = '';
-    if (devuelto < 0) {
-      mensajeDinero = `<span style="color:#ff4444;">Dinero a recibir: ${formatCurrency(Math.abs(devuelto))}</span>`;
-    } else {
-      mensajeDinero = `Dinero a devolver: ${formatCurrency(devuelto)}`;
-    }
-
     resultado.innerHTML = `
       Total Facturas: ${formatCurrency(totalFacturas)}<br>
       Rebaja: ${formatCurrency(rebaja)}<br>
       Total Ajustado: ${formatCurrency(totalAjustado)}<br>
-      ${mensajeDinero}
+      Dinero devuelto: ${formatCurrency(devuelto)}
     `;
   }
 
-  // Guardar en localStorage al cambiar campos
   dineroRecibido.addEventListener('input', () => {
     calcularAutomatico();
     guardarFormularioTemporal();
@@ -380,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resultado.innerHTML = '';
     errorDiv.style.display = 'none';
     agregarFactura();
-    localStorage.removeItem(FORM_STATE_KEY); // limpiar temporal
+    localStorage.removeItem(FORM_STATE_KEY);
     playBeep();
     feedback(textos.camposLimpiados);
   }
@@ -607,48 +595,3 @@ function actualizarGraficaResumen(historialFiltrado) {
     }
   });
 }
-
-// === BANNER DE ACTUALIZACIÓN ===
-if ('serviceWorker' in navigator) {
-  let newWorker;
-  navigator.serviceWorker.register('sw.js').then(registration => {
-    registration.onupdatefound = () => {
-      newWorker = registration.installing;
-      newWorker.onstatechange = () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          const updateBanner = document.createElement('div');
-          updateBanner.style = 'position:fixed;bottom:0;left:0;right:0;background:#1976d2;color:#fff;text-align:center;padding:12px;z-index:9999;';
-          updateBanner.innerHTML = `¡Nueva versión disponible! <button id="reloadBtn" style="margin-left:14px;">Actualizar</button>`;
-          document.body.appendChild(updateBanner);
-          document.getElementById('reloadBtn').onclick = () => {
-            newWorker.postMessage({ type: 'SKIP_WAITING' });
-            window.location.reload();
-          };
-        }
-      };
-    });
-  });
-  let refreshing;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (refreshing) return;
-    window.location.reload();
-    refreshing = true;
-  });
-}
-
-// === BANNER DE INSTALACIÓN PWA ===
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', e => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const installBanner = document.createElement('div');
-  installBanner.style = 'position:fixed;bottom:0;left:0;right:0;background:#00332b;color:#fff;text-align:center;padding:12px;z-index:9999;';
-  installBanner.innerHTML = `¿Quieres instalar esta app? <button id="btnInstall" style="margin-left:14px;">Instalar</button>`;
-  document.body.appendChild(installBanner);
-  document.getElementById('btnInstall').onclick = () => {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      installBanner.remove();
-    });
-  };
-});
