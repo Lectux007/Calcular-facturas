@@ -1,18 +1,16 @@
 :root {
-  /* Colores base */
   --primary: #1976d2; /* Azul principal */
   --secondary: #40e0d0; /* Turquesa secundario */
   --bg-dark: #001e1c;
-  --bg-light: #f5f5f5;
+  --bg-light: #ffffff;
   --text-dark: #00332b;
   --text-light: #e0f7fa;
   --error: #ff4444;
 
-  /* Transiciones suaves */
   --transition-speed: 0.3s;
 }
 
-/* Splash screen moderno */
+/* Splash screen moderno y tecnológico */
 #splash {
   position: fixed;
   z-index: 9999;
@@ -69,7 +67,7 @@
   z-index: 2;
   text-align: center;
   color: #fff;
-  background: rgba(16, 18, 44, 0.75);
+  background: rgba(16, 18, 44, 0.85);
   padding: 40px 28px;
   border-radius: 22px;
   box-shadow:
@@ -139,6 +137,7 @@
   to { transform: scale(1) translateY(0); opacity: 1;}
 }
 
+/* Cuerpo del sitio */
 body[data-theme="light"] {
   background: var(--bg-light);
   color: var(--text-dark);
@@ -328,7 +327,7 @@ button:hover {
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(90deg,#00ffe5,#8f94fb 80%);
+  background: linear-gradient(90deg, #00ffe5, #8f94fb 80%);
   color: #10122c;
   font-weight: bold;
   padding: 12px 30px;
