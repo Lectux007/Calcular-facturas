@@ -83,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
       agregarFactura();
     }
   }
+
   // -- FIN BLOQUE GUARDADO Y RESTAURACIÓN --
 
   // Feedback visual animado
@@ -558,23 +559,25 @@ document.addEventListener('DOMContentLoaded', () => {
 function actualizarGraficaResumen(historialFiltrado) {
   const canvas = document.getElementById('graficaResumen');
   if (!canvas) return;
-  // Agrupa los totales por fechaISO
+
   const agrupado = {};
   historialFiltrado.forEach(item => {
     agrupado[item.fechaISO] = (agrupado[item.fechaISO] || 0) + item.total;
   });
+
   const labels = Object.keys(agrupado);
   const data = Object.values(agrupado);
-  // Destruye el gráfico anterior si existe
+
   if (window.graficaResumenChart) {
     window.graficaResumenChart.destroy();
   }
-  // Si no hay datos, limpia el canvas
+
   if (data.length === 0) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     return;
   }
+
   window.graficaResumenChart = new Chart(canvas.getContext('2d'), {
     type: 'bar',
     data: {
