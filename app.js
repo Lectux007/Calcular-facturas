@@ -2,10 +2,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // Splash screen behavior
   const splash = document.getElementById('splash');
   const entrarApp = document.getElementById('entrarApp');
+
   function ocultarSplash() {
     splash.classList.remove('splash-visible');
     setTimeout(() => { splash.style.display = 'none'; }, 800);
   }
+
   entrarApp.addEventListener('click', ocultarSplash);
   setTimeout(ocultarSplash, 6000); // 6 segundos
 
@@ -83,8 +85,6 @@ document.addEventListener('DOMContentLoaded', () => {
       agregarFactura();
     }
   }
-
-  // -- FIN BLOQUE GUARDADO Y RESTAURACIÓN --
 
   // Feedback visual animado
   function feedback(msg) {
@@ -397,8 +397,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     historialDiv.innerHTML = paginatedHistorial.map((item, index) => `
       <div>
-        <span>Transacción ${item.transaccionNum} - <strong>${item.fecha}</strong>:
-          Total: ${formatCurrency(item.total)}</span>
+        <span>Transacción ${item.transaccionNum} - <strong>${item.fecha}</strong>: Total: ${formatCurrency(item.total)}</span>
         <button class="delete-btn" type="button" onclick="eliminarEntrada(${start + index})">${textos.eliminar}</button>
       </div>
     `).join('');
