@@ -1,10 +1,12 @@
 {
-  "name": "Calcular Facturas",
+  "name": "Control de Dinero",
   "short_name": "Facturas",
-  "start_url": ".",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#00332b",
   "theme_color": "#1976d2",
+  "description": "Calculadora de facturas con historial y gráficas",
+  "orientation": "portrait",
   "icons": [
     {
       "src": "Icono de calculadora_20250608_150126_0000.jpg",
@@ -16,5 +18,9 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "lang": "es-ES",
+  "scope": "./",
+  "prefer_related_applications": false,
+  "gcm_sender_id": "103953800507"
 }
