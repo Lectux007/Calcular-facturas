@@ -109,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
       toggleTema.textContent = '🌙 Tema Oscuro';
     }
   }
+
   toggleTema.addEventListener('click', () => {
     const isDark = document.body.getAttribute('data-theme') === 'dark';
     document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
@@ -120,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Sonido
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx = null;
+
   function initAudioContext() {
     if (!AudioContext) return false;
     if (!audioCtx) {
@@ -131,6 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     return true;
   }
+
   function playBeep() {
     if (!sonidoHabilitado || !initAudioContext()) return;
     const oscillator = audioCtx.createOscillator();
@@ -143,6 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     oscillator.start();
     setTimeout(() => oscillator.stop(), 100);
   }
+
   function playError() {
     if (!sonidoHabilitado || !initAudioContext()) return;
     const oscillator = audioCtx.createOscillator();
@@ -155,6 +159,7 @@ document.addEventListener('DOMContentLoaded', () => {
     oscillator.start();
     setTimeout(() => oscillator.stop(), 200);
   }
+
   function playDestruction() {
     if (!sonidoHabilitado || !initAudioContext()) return;
     const oscillator = audioCtx.createOscillator();
@@ -274,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
         suma += val;
       }
     });
-
     const rebaja = parseFloat(rebajaInput.value) || 0;
     if (rebaja < 0) {
       rebajaInput.classList.add('error');
@@ -283,7 +287,6 @@ document.addEventListener('DOMContentLoaded', () => {
       playError();
       return null;
     }
-
     if (rebaja > suma) {
       rebajaInput.classList.add('error');
       errorDiv.style.display = 'block';
@@ -291,7 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
       playError();
       return null;
     }
-
     errorDiv.style.display = 'none';
     return { totalFacturas: suma, rebaja };
   }
@@ -307,11 +309,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const totalAjustado = totalFacturas - rebaja;
     const recibido = parseFloat(dineroRecibido.value) || 0;
     const devuelto = recibido - totalAjustado;
+
+    let mensajeDinero = '';
+    if (devuelto < 0) {
+      mensajeDinero = `<span style="color:#ff4444;">Dinero a recibir: ${formatCurrency(Math.abs(devuelto))}</span>`;
+    } else {
+      mensajeDinero = `Dinero a devolver: ${formatCurrency(devuelto)}`;
+    }
+
     resultado.innerHTML = `
       Total Facturas: ${formatCurrency(totalFacturas)}<br>
       Rebaja: ${formatCurrency(rebaja)}<br>
       Total Ajustado: ${formatCurrency(totalAjustado)}<br>
-      Dinero devuelto: ${formatCurrency(devuelto)}
+      ${mensajeDinero}
     `;
   }
 
@@ -320,45 +330,47 @@ document.addEventListener('DOMContentLoaded', () => {
     calcularAutomatico();
     guardarFormularioTemporal();
   });
+
   rebajaInput.addEventListener('input', () => {
     calcularAutomatico();
     guardarFormularioTemporal();
   });
+
   facturasContainer.addEventListener('input', guardarFormularioTemporal);
 
   function guardarHistorial() {
-  const suma = obtenerSumaFacturas();
-  if (suma === null || suma.totalFacturas === 0) {
-    errorDiv.style.display = 'block';
-    errorDiv.textContent = textos.errorFacturas;
-    playError();
-    return;
+    const suma = obtenerSumaFacturas();
+    if (suma === null || suma.totalFacturas === 0) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = textos.errorFacturas;
+      playError();
+      return;
+    }
+    const { totalFacturas, rebaja } = suma;
+    const totalAjustado = totalFacturas - rebaja;
+    const recibido = parseFloat(dineroRecibido.value) || 0;
+    const devuelto = recibido - totalAjustado;
+    const fechaObj = new Date();
+    const fecha = fechaObj.toLocaleString();
+    const fechaISO = fechaObj.toISOString().slice(0, 10); // "YYYY-MM-DD"
+    historial.unshift({
+      fecha,
+      fechaISO,
+      transaccionNum: historial.filter(i => i.fechaISO === fechaISO).length + 1,
+      totalFacturas,
+      rebaja,
+      total: totalAjustado,
+      recibido,
+      devuelto
+    });
+    saveHistorial();
+    limpiarCampos();
+    localStorage.removeItem(FORM_STATE_KEY); // limpiar temporal
+    switchTab('historial');
+    mostrarHistorial();
+    playBeep();
+    feedback(textos.guardar);
   }
-  const { totalFacturas, rebaja } = suma;
-  const totalAjustado = totalFacturas - rebaja;
-  const recibido = parseFloat(dineroRecibido.value) || 0;
-  const devuelto = recibido - totalAjustado;
-  const fechaObj = new Date();
-  const fecha = fechaObj.toLocaleString();
-  const fechaISO = fechaObj.toISOString().slice(0, 10); // "YYYY-MM-DD"
-  historial.unshift({
-    fecha,
-    fechaISO,
-    transaccionNum: historial.filter(i => (i.fechaISO === fechaISO)).length + 1,
-    totalFacturas,
-    rebaja,
-    total: totalAjustado,
-    recibido,
-    devuelto
-  });
-  saveHistorial();
-  limpiarCampos();
-  localStorage.removeItem(FORM_STATE_KEY); // limpiar temporal
-  switchTab('historial');
-  mostrarHistorial();
-  playBeep();
-  feedback(textos.guardar);
-}
 
   function limpiarCampos() {
     facturasContainer.innerHTML = '';
@@ -400,7 +412,7 @@ document.addEventListener('DOMContentLoaded', () => {
     nextPage.disabled = end >= filteredHistorial.length;
 
     actualizarEstadisticas(filteredHistorial);
-  actualizarGraficaResumen(filteredHistorial);
+    actualizarGraficaResumen(filteredHistorial);
   }
 
   function actualizarEstadisticas(historialFiltrado) {
@@ -429,10 +441,17 @@ document.addEventListener('DOMContentLoaded', () => {
     playDestruction();
     feedback(textos.borrado);
   }
+
   window.eliminarEntrada = eliminarEntrada;
 
   function descargarHistorial() {
     historial = loadHistorial();
+    if (historial.length === 0) {
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = textos.noEntradasExportar;
+      playError();
+      return;
+    }
     let csv = 'Fecha,Total Facturas,Rebaja,Total,Recibido,Devuelto\n';
     historial.forEach(item => {
       csv += `${item.fecha},${item.totalFacturas},${item.rebaja},${item.total},${item.recibido},${item.devuelto}\n`;
@@ -523,8 +542,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btnBorrarHistorial').addEventListener('click', borrarHistorial);
   document.getElementById('btnDescargarHistorial').addEventListener('click', descargarHistorial);
   document.getElementById('btnExportarPDF').addEventListener('click', exportarHistorialPDF);
-
-  facturaForm.addEventListener('submit', (e) => {
+  facturaForm.addEventListener('submit', e => {
     e.preventDefault();
     guardarHistorial();
   });
@@ -547,19 +565,16 @@ function actualizarGraficaResumen(historialFiltrado) {
   });
   const labels = Object.keys(agrupado);
   const data = Object.values(agrupado);
-
   // Destruye el gráfico anterior si existe
   if (window.graficaResumenChart) {
     window.graficaResumenChart.destroy();
   }
-
   // Si no hay datos, limpia el canvas
   if (data.length === 0) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     return;
   }
-
   window.graficaResumenChart = new Chart(canvas.getContext('2d'), {
     type: 'bar',
     data: {
@@ -568,73 +583,4 @@ function actualizarGraficaResumen(historialFiltrado) {
         label: 'Total por día',
         data,
         backgroundColor: '#1976d2'
-      }]
-    },
-    options: {
-      plugins: {
-        legend: { display: false },
-        title: {
-          display: true,
-          text: 'Resumen diario de totales'
-        }
-      },
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            callback: function(value) {
-              return typeof formatCurrency === 'function' ? formatCurrency(value) : value;
-            }
-          }
-        }
-      }
-    }
-  });
-}
-
-// === BANNER DE ACTUALIZACIÓN ===
-if ('serviceWorker' in navigator) {
-  let newWorker;
-  navigator.serviceWorker.register('sw.js').then(registration => {
-    registration.onupdatefound = () => {
-      newWorker = registration.installing;
-      newWorker.onstatechange = () => {
-        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-          const updateBanner = document.createElement('div');
-          updateBanner.style = 'position:fixed;bottom:0;left:0;right:0;background:#1976d2;color:#fff;text-align:center;padding:12px;z-index:9999;';
-          updateBanner.innerHTML = `¡Nueva versión disponible! <button id="reloadBtn" style="margin-left:14px;">Actualizar</button>`;
-          document.body.appendChild(updateBanner);
-          document.getElementById('reloadBtn').onclick = () => {
-            newWorker.postMessage({ type: 'SKIP_WAITING' });
-            window.location.reload();
-          };
-        }
-      };
-    };
-  });
-
-  let refreshing;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (refreshing) return;
-    window.location.reload();
-    refreshing = true;
-  });
-}
-
-// === BANNER DE INSTALACIÓN PWA ===
-let deferredPrompt;
-window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
-  const installBanner = document.createElement('div');
-  installBanner.style = 'position:fixed;bottom:0;left:0;right:0;background:#00332b;color:#fff;text-align:center;padding:12px;z-index:9999;';
-  installBanner.innerHTML = `¿Quieres instalar esta app? <button id="btnInstall" style="margin-left:14px;">Instalar</button>`;
-  document.body.appendChild(installBanner);
-  document.getElementById('btnInstall').onclick = () => {
-    deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(() => {
-      installBanner.remove();
-    });
-  };
-});
+   
