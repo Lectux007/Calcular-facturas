@@ -1,6 +1,3 @@
-/* =========================
-   Variables globales
-   ========================= */
 :root {
   --primary: #1976d2; /* Azul principal */
   --secondary: #40e0d0; /* Turquesa secundario */
@@ -12,9 +9,7 @@
   --transition-speed: 0.3s;
 }
 
-/* =========================
-   Splash screen
-   ========================= */
+/* Splash screen */
 #splash {
   position: fixed;
   z-index: 9999;
@@ -27,12 +22,10 @@
   min-width: 100vw;
   overflow: hidden;
 }
-
 #splash:not(.splash-visible) {
   opacity: 0;
   pointer-events: none;
 }
-
 .splash-animated-bg {
   position: absolute;
   inset: 0;
@@ -41,12 +34,10 @@
   animation: splashGradientMove 6s linear infinite alternate;
   filter: blur(2px) brightness(0.85);
 }
-
 @keyframes splashGradientMove {
   0% { background-position: 0% 50%; }
   100% { background-position: 100% 50%; }
 }
-
 .splash-animated-bg::after {
   content: "";
   display: block;
@@ -59,12 +50,10 @@
   opacity: 0.7;
   animation: splashLinesMove 12s linear infinite;
 }
-
 @keyframes splashLinesMove {
   0% { background-position: 0 0, 0 0; }
   100% { background-position: 80px 160px, 160px 80px; }
 }
-
 .splash-content {
   position: relative;
   z-index: 2;
@@ -80,21 +69,18 @@
   backdrop-filter: blur(8px);
   animation: splash-in 1.1s cubic-bezier(.56,.12,.37,1.2);
 }
-
 .splash-content h1 {
   font-size: 2.5em;
   margin-bottom: 0.5em;
   letter-spacing: 1px;
   font-weight: 700;
 }
-
 .splash-content p {
   font-size: 1.15em;
   margin-bottom: 1.5em;
   letter-spacing: 0.5px;
   color: #c6f0ff;
 }
-
 .splash-content button {
   font-size: 1.15em;
   font-weight: bold;
@@ -107,16 +93,13 @@
   cursor: pointer;
   transition: background var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
 }
-
 .splash-content button:hover {
   background: linear-gradient(90deg, #a770ef, #00ffe5 80%);
   color: white;
   box-shadow: 0 0 32px #a770efcc, 0 0 80px #00ffe5aa inset;
 }
 
-/* =========================
-   Cuerpo general
-   ========================= */
+/* General body */
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -129,21 +112,18 @@ body {
 }
 
 /* =========================
-   Modo claro BONITO
+   Tema CLARO moderno
    ========================= */
 body[data-theme="light"] {
   background: #fff;
   color: #102b69;
 }
-
 body[data-theme="light"] h1,
 body[data-theme="light"] h2,
 body[data-theme="light"] h3 {
   color: #1976d2;
   text-shadow: 0 2px 8px #e3eafd;
 }
-
-/* Tablas y paneles */
 body[data-theme="light"] .tab-content,
 body[data-theme="light"] .stats,
 body[data-theme="light"] #historial {
@@ -151,14 +131,11 @@ body[data-theme="light"] #historial {
   color: #102b69;
   box-shadow: 0 0 12px #e3eafd inset;
 }
-
-/* Etiquetas y campos */
 body[data-theme="light"] label {
   color: #0a1a33;
   text-shadow: 0 0 6px #e3eafd;
   font-weight: bold;
 }
-
 body[data-theme="light"] input[type="number"],
 body[data-theme="light"] input[type="text"],
 body[data-theme="light"] input[type="date"] {
@@ -168,19 +145,16 @@ body[data-theme="light"] input[type="date"] {
   box-shadow: 0 0 6px #e3eafd inset;
   font-weight: 500;
 }
-
 body[data-theme="light"] input[type="number"]:focus,
 body[data-theme="light"] input[type="text"]:focus,
 body[data-theme="light"] input[type="date"]:focus {
   outline: 2px solid #1976d2;
   box-shadow: 0 0 12px #1976d2 inset;
 }
-
 body[data-theme="light"] input::placeholder {
   color: #b3c5f7;
   opacity: 1;
 }
-
 body[data-theme="light"] button,
 body[data-theme="light"] .tab-btn {
   background: linear-gradient(90deg, #1976d2 60%, #40e0d0 100%);
@@ -190,7 +164,6 @@ body[data-theme="light"] .tab-btn {
   font-weight: bold;
   letter-spacing: 0.5px;
 }
-
 body[data-theme="light"] button:hover,
 body[data-theme="light"] .tab-btn:hover,
 body[data-theme="light"] .tab-btn.active {
@@ -199,21 +172,17 @@ body[data-theme="light"] .tab-btn.active {
   box-shadow: 0 4px 24px #1976d2;
   transition: background 0.2s, color 0.2s;
 }
-
 body[data-theme="light"] .feedback {
   background: linear-gradient(90deg, #1976d2 60%, #40e0d0 100%);
   color: #fff;
 }
-
 body[data-theme="light"] #error {
   color: #ff4444;
   text-shadow: 0 0 6px #ffdede;
 }
-
 body[data-theme="light"] #resultado {
   color: #1976d2;
 }
-
 body[data-theme="light"] .pagination button {
   background: #e3eafd;
   color: #1976d2;
@@ -223,20 +192,18 @@ body[data-theme="light"] .pagination button:disabled {
   background: #f0f4fa;
   color: #b3c5f7;
 }
-
 body[data-theme="light"] .facturas-container,
 body[data-theme="light"] .campo {
   background: #f9fbfe;
   border-radius: 8px;
   padding: 8px;
 }
-
 body[data-theme="light"] #historial div {
   color: #102b69;
 }
 
 /* =========================
-   Modo oscuro
+   Tema OSCURO
    ========================= */
 body[data-theme="dark"] {
   background: linear-gradient(135deg, #0f2027, #2c5364);
