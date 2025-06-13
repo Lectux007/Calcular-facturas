@@ -1,48 +1,40 @@
-importScripts("https://unpkg.com/workbox-sw@6.5.4/build/workbox-sw.min.js"); 
+// sw.js
+const CACHE_NAME = 'v1';
 
-// Configuración del nombre del caché
-workbox.core.setCacheNameDetails({
-  prefix: "control-dinero",
-  suffix: "v2"
+self.addEventListener('install', function(event) {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(function(cache) {
+      return cache.addAll([
+        './index.html',
+        './app.js',
+        './style.css',
+        './chart.min.js',
+        './jspdf.umd.min.js',
+        './jspdf.plugin.autotable.min.js',
+        './icono.png'
+      ]);
+    })
+  );
 });
 
-// Precache archivos esenciales
-workbox.precaching.precacheAndRoute([
-  { url: "./", revision: null },
-  { url: "./index.html", revision: null },
-  { url: "./manifest.json", revision: null },
-  { url: "./app.js", revision: null },
-  { url: "./style.css", revision: null },
-  { url: "./icono.png", revision: null },
-  { url: "./chart.min.js", revision: null },
-  { url: "./jspdf.umd.min.js", revision: null },
-  { url: "./jspdf.plugin.autotable.min.js", revision: null }
-]);
+self.addEventListener('activate', function(event) {
+  event.waitUntil(
+    caches.keys().then(function(cacheNames) {
+      return Promise.all(
+        cacheNames.filter(function(cacheName) {
+          return cacheName !== CACHE_NAME;
+        }).map(function(cacheName) {
+          return caches.delete(cacheName);
+        })
+      );
+    })
+  );
+});
 
-// Estrategia para recursos estáticos (JS, CSS, IMG)
-workbox.routing.registerRoute(
-  ({ request }) =>
-    request.destination === 'script' ||
-    request.destination === 'style' ||
-    request.destination === 'image',
-  new workbox.strategies.CacheFirst({
-    cacheName: 'static-resources',
-    plugins: [new workbox.expiration.ExpirationPlugin({ maxEntries: 50, purgeOnQuotaError: true })]
-  })
-);
-
-// Estrategia para documentos HTML
-workbox.routing.registerRoute(
-  ({ request }) => request.destination === 'document',
-  new workbox.strategies.NetworkFirst({
-    cacheName: 'pages',
-    plugins: [new workbox.expiration.ExpirationPlugin({ maxEntries: 10, purgeOnQuotaError: true })]
-  })
-);
-
-// Manejo de mensajes para actualizar sin recargar
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
+self.addEventListener('fetch', function(event) {
+  event.respondWith(
+    caches.match(event.request).then(function(response) {
+      return response || fetch(event.request);
+    })
+  );
 });
