@@ -1,6 +1,6 @@
 :root {
-  --primary: #1976d2; /* Azul principal */
-  --secondary: #40e0d0; /* Turquesa secundario */
+  --primary: #1976d2;
+  --secondary: #40e0d0;
   --bg-dark: #001e1c;
   --bg-light: #ffffff;
   --text-dark: #00332b;
@@ -111,9 +111,7 @@ body {
   transition: background var(--transition-speed), color var(--transition-speed);
 }
 
-/* =========================
-   Tema CLARO moderno
-   ========================= */
+/* Tema claro */
 body[data-theme="light"] {
   background: #fff;
   color: #102b69;
@@ -202,88 +200,127 @@ body[data-theme="light"] #historial div {
   color: #102b69;
 }
 
-/* =========================
-   Tema OSCURO
-   ========================= */
+/* Tema oscuro */
 body[data-theme="dark"] {
   background: linear-gradient(135deg, #0f2027, #2c5364);
   color: var(--text-light);
 }
-
-h1, h2, h3 {
-  text-align: center;
+body[data-theme="dark"] h1,
+body[data-theme="dark"] h2,
+body[data-theme="dark"] h3 {
+  color: var(--text-light);
   text-shadow: 0 0 5px var(--primary);
 }
+body[data-theme="dark"] .tab-content,
+body[data-theme="dark"] .stats,
+body[data-theme="dark"] #historial {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  box-shadow: 0 0 10px var(--primary) inset;
+}
+body[data-theme="dark"] label {
+  color: var(--text-light);
+  text-shadow: 0 0 4px var(--primary);
+}
+body[data-theme="dark"] input[type="number"],
+body[data-theme="dark"] input[type="text"],
+body[data-theme="dark"] input[type="date"] {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  border: none;
+  box-shadow: 0 0 8px var(--primary) inset;
+}
+body[data-theme="dark"] input[type="number"]:focus,
+body[data-theme="dark"] input[type="text"]:focus,
+body[data-theme="dark"] input[type="date"]:focus {
+  outline: none;
+  box-shadow: 0 0 12px var(--primary) inset;
+}
+body[data-theme="dark"] input::placeholder {
+  color: #7fd5e0;
+  opacity: 1;
+}
+body[data-theme="dark"] button,
+body[data-theme="dark"] .tab-btn {
+  background: var(--primary);
+  color: var(--text-light);
+  border: none;
+  box-shadow: 0 0 10px var(--primary) inset;
+}
+body[data-theme="dark"] button:hover,
+body[data-theme="dark"] .tab-btn:hover,
+body[data-theme="dark"] .tab-btn.active {
+  background: var(--secondary);
+  color: #001e1c;
+  box-shadow: 0 0 15px var(--secondary) inset;
+}
+body[data-theme="dark"] .feedback {
+  background: linear-gradient(90deg,#00ffe5,#8f94fb 80%);
+  color: #10122c;
+}
+body[data-theme="dark"] #error {
+  color: var(--error);
+  text-shadow: 0 0 4px var(--error);
+}
+body[data-theme="dark"] #resultado {
+  color: var(--primary);
+}
+body[data-theme="dark"] .pagination button {
+  background: var(--bg-dark);
+  color: var(--text-light);
+  border: 1.2px solid var(--primary);
+}
+body[data-theme="dark"] .pagination button:disabled {
+  background: #133a45;
+  color: #305b66;
+}
+body[data-theme="dark"] .facturas-container,
+body[data-theme="dark"] .campo {
+  background: #0a2a32;
+  border-radius: 8px;
+  padding: 8px;
+}
+body[data-theme="dark"] #historial div {
+  color: var(--text-light);
+}
 
+/* General */
 .tabs {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-bottom: 20px;
 }
-
 .tab-btn {
   padding: 10px 20px;
   font-size: 16px;
-  background: var(--primary);
-  border: none;
   border-radius: 8px 8px 0 0;
-  color: var(--text-dark);
   cursor: pointer;
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
 }
-.tab-btn.active {
-  background: var(--secondary);
-  box-shadow: 0 0 15px var(--secondary);
-}
-.tab-btn:hover {
-  background: var(--secondary);
-}
-
 .tab-content {
   display: none;
-  background: var(--bg-dark);
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px var(--primary) inset;
 }
 .tab-content.active {
   display: block;
 }
-
 .campo {
   margin-bottom: 15px;
 }
-
-label {
-  display: block;
-  margin-bottom: 5px;
-  text-shadow: 0 0 4px var(--primary);
-}
-
 input[type="number"],
 input[type="text"],
 input[type="date"] {
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  border: none;
   border-radius: 5px;
-  background: var(--bg-dark);
-  color: var(--text-light);
-  box-shadow: 0 0 8px var(--primary) inset;
   transition: box-shadow var(--transition-speed);
-}
-input[type="number"]:focus,
-input[type="text"]:focus,
-input[type="date"]:focus {
-  outline: none;
-  box-shadow: 0 0 12px var(--primary) inset;
 }
 input.error {
   border: 2px solid var(--error);
 }
-
 .facturas-container {
   display: flex;
   flex-direction: column;
@@ -297,54 +334,37 @@ input.error {
 .factura-item input {
   flex: 1;
 }
-
 button {
   padding: 10px;
   margin-top: 10px;
   width: 100%;
   font-size: 16px;
-  background: var(--primary);
-  border: none;
   border-radius: 8px;
-  color: var(--text-dark);
   cursor: pointer;
-  box-shadow: 0 0 10px var(--primary) inset;
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
 }
-button:hover {
-  background: var(--secondary);
-  box-shadow: 0 0 15px var(--secondary) inset;
-}
-
 .delete-btn {
   width: auto;
   padding: 5px 10px;
   font-size: 14px;
 }
-
 #error {
   text-align: center;
   font-weight: bold;
   font-size: 1.2em;
   margin-top: 10px;
-  color: var(--error);
-  text-shadow: 0 0 4px var(--error);
   display: none;
 }
-
 #resultado {
   text-align: center;
   font-weight: bold;
   font-size: 1.4em;
   margin-top: 15px;
-  text-shadow: 0 0 6px var(--primary);
 }
-
 #historial {
   max-height: 300px;
   overflow-y: auto;
   font-size: 0.9em;
-  color: var(--text-light);
 }
 #historial div {
   margin-bottom: 5px;
@@ -352,54 +372,44 @@ button:hover {
   align-items: center;
   justify-content: space-between;
 }
-
 .pagination {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 10px;
 }
-
 .config {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-bottom: 20px;
 }
-
 .stats {
   margin-top: 20px;
   padding: 10px;
-  background: var(--bg-dark);
   border-radius: 8px;
   text-align: center;
 }
-
 .feedback {
   position: fixed;
   top: 16px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(90deg,#00ffe5,#8f94fb 80%);
-  color: #10122c;
   font-weight: bold;
   padding: 12px 30px;
   border-radius: 100px;
-  box-shadow: 0 0 18px #00ffe5cc;
   z-index: 9999;
   font-size: 1.1em;
   animation: feedbackfade 2.6s forwards;
   opacity: 0.98;
   pointer-events: none;
 }
-
 @keyframes feedbackfade {
   0% { opacity: 0; transform: translateX(-50%) scale(0.7);}
   10% { opacity: 1; transform: translateX(-50%) scale(1);}
   70% { opacity: 1; }
   100% { opacity: 0; transform: translateX(-50%) scale(0.7);}
 }
-
 button:focus-visible,
 input:focus-visible {
   outline: 3px solid #a770ef;
