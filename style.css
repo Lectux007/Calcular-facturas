@@ -3,17 +3,118 @@
   --primary: #1976d2; /* Azul principal */
   --secondary: #40e0d0; /* Turquesa secundario */
   --bg-dark: #001e1c;
-  --bg-light: #f5f5f5;
-  --text-dark: #000;
-  --text-highlight: #6a50c8;
+  --bg-light: #ffffff;
+  --text-dark: #00332b;
   --text-light: #e0f7fa;
   --error: #ff4444;
   --transition-speed: 0.3s;
 }
 
+/* Splash screen */
+#splash {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-speed);
+  min-height: 100dvh;
+  min-width: 100vw;
+  overflow: hidden;
+}
+#splash:not(.splash-visible) {
+  opacity: 0;
+  pointer-events: none;
+}
+.splash-animated-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(120deg, #0f2027 0%, #2c5364 60%, #8f94fb 100%);
+  animation: splashGradientMove 6s linear infinite alternate;
+  filter: blur(2px) brightness(0.85);
+}
+@keyframes splashGradientMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.splash-animated-bg::after {
+  content: "";
+  display: block;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(120deg, rgba(126,255,255,0.12) 0 1px, transparent 1px 20px),
+    repeating-linear-gradient(60deg, rgba(255,0,255,0.08) 0 1px, transparent 1px 30px);
+  opacity: 0.7;
+  animation: splashLinesMove 12s linear infinite;
+}
+@keyframes splashLinesMove {
+  0% { background-position: 0 0, 0 0; }
+  100% { background-position: 80px 160px, 160px 80px; }
+}
+.splash-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  background: rgba(16, 18, 44, 0.85);
+  padding: 40px 28px;
+  border-radius: 22px;
+  box-shadow:
+    0 2px 24px #8f94fb88,
+    0 0 24px #00ffe5cc,
+    0 0 120px #a770ef55 inset;
+  backdrop-filter: blur(8px);
+  animation: splash-in 1.1s cubic-bezier(.56,.12,.37,1.2);
+}
+.splash-content h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  letter-spacing: 1px;
+  font-weight: 700;
+}
+.splash-content p {
+  font-size: 1.15em;
+  margin-bottom: 1.5em;
+  letter-spacing: 0.5px;
+  color: #c6f0ff;
+}
+.splash-content button {
+  font-size: 1.15em;
+  font-weight: bold;
+  padding: 14px 48px;
+  background: linear-gradient(90deg, #00ffe5 10%, #8f94fb 90%);
+  color: #10122c;
+  border: none;
+  border-radius: 100px;
+  box-shadow: 0 0 18px #00ffe5cc, 0 0 40px #8f94fb55 inset;
+  cursor: pointer;
+  transition: background var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
+}
+.splash-content button:hover {
+  background: linear-gradient(90deg, #a770ef, #00ffe5 80%);
+  color: white;
+  box-shadow: 0 0 32px #a770efcc, 0 0 80px #00ffe5aa inset;
+}
+
+/* Cuerpo general */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text-dark);
+  background: var(--bg-dark);
+  transition: background var(--transition-speed), color var(--transition-speed);
+}
+
 /* Modo claro */
 body[data-theme="light"] {
-  background-color: var(--bg-light);
+  background: var(--bg-light);
   color: var(--text-dark);
 }
 
@@ -23,31 +124,11 @@ body[data-theme="dark"] {
   color: var(--text-light);
 }
 
-/* Títulos */
 h1, h2, h3 {
   text-align: center;
-  margin-bottom: 10px;
-  font-weight: bold;
-  color: var(--text-dark); /* Negro en modo claro, púrpura opcional */
+  text-shadow: 0 0 5px var(--primary);
 }
 
-h2 {
-  color: var(--text-highlight); /* Púrpura vibrante */
-  font-size: 1.1em;
-  font-weight: normal;
-  text-transform: uppercase;
-}
-
-/* Contenedor general */
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.05);
-}
-
-/* Tabs de navegación */
 .tabs {
   display: flex;
   justify-content: center;
@@ -61,13 +142,13 @@ h2 {
   background: var(--primary);
   border: none;
   border-radius: 8px 8px 0 0;
-  color: white;
+  color: var(--text-dark);
   cursor: pointer;
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
 }
 .tab-btn.active {
   background: var(--secondary);
-  box-shadow: 0 0 10px var(--secondary);
+  box-shadow: 0 0 15px var(--secondary);
 }
 .tab-btn:hover {
   background: var(--secondary);
@@ -92,7 +173,6 @@ label {
   display: block;
   margin-bottom: 5px;
   text-shadow: 0 0 4px var(--primary);
-  color: var(--text-dark); /* Blanco en modo claro */
 }
 
 input[type="number"],
@@ -108,14 +188,12 @@ input[type="date"] {
   box-shadow: 0 0 8px var(--primary) inset;
   transition: box-shadow var(--transition-speed);
 }
-
 input[type="number"]:focus,
 input[type="text"]:focus,
 input[type="date"]:focus {
   outline: none;
   box-shadow: 0 0 12px var(--primary) inset;
 }
-
 input.error {
   border: 2px solid var(--error);
 }
@@ -125,11 +203,13 @@ input.error {
   flex-direction: column;
   gap: 10px;
 }
-
 .factura-item {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+.factura-item input {
+  flex: 1;
 }
 
 button {
@@ -140,14 +220,14 @@ button {
   background: var(--primary);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: var(--text-dark);
   cursor: pointer;
-  box-shadow: 0 0 10px var(--primary);
+  box-shadow: 0 0 10px var(--primary) inset;
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
 }
-
 button:hover {
   background: var(--secondary);
+  box-shadow: 0 0 15px var(--secondary) inset;
 }
 
 .delete-btn {
@@ -171,7 +251,6 @@ button:hover {
   font-weight: bold;
   font-size: 1.4em;
   margin-top: 15px;
-  color: var(--text-dark); /* Negro en modo claro */
   text-shadow: 0 0 6px var(--primary);
 }
 
@@ -181,7 +260,6 @@ button:hover {
   font-size: 0.9em;
   color: var(--text-light);
 }
-
 #historial div {
   margin-bottom: 5px;
   display: flex;
@@ -209,7 +287,6 @@ button:hover {
   background: var(--bg-dark);
   border-radius: 8px;
   text-align: center;
-  color: var(--text-light);
 }
 
 .feedback {
@@ -242,7 +319,6 @@ input:focus-visible {
   outline: 3px solid #a770ef;
   outline-offset: 2px;
 }
-
 input.error:focus-visible {
   outline: 3px solid var(--error);
 }
