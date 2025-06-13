@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
 
-  <!-- Título -->
   <title>Control de Dinero</title>
 
   <!-- Manifest PWA -->
@@ -27,7 +26,7 @@
   <!-- Estilos -->
   <link rel="stylesheet" href="./style.css">
 </head>
-<body>
+<body data-theme="light">
   <!-- Splash screen moderno y tecnológico -->
   <div id="splash" class="splash-visible">
     <div class="splash-animated-bg"></div>
@@ -104,7 +103,7 @@
   <!-- Aplicación principal -->
   <script src="./app.js"></script>
 
-  <!-- Registro del Service Worker -->
+  <!-- Registro del Service Worker y cambio de tema -->
   <script>
     // Registro del service worker
     if ("serviceWorker" in navigator) {
@@ -117,11 +116,9 @@
 
     // Botón de instalación personalizado
     let deferredPrompt;
-
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
       deferredPrompt = e;
-
       const installBtn = document.createElement('button');
       installBtn.textContent = '📲 Instalar App';
       Object.assign(installBtn.style, {
@@ -140,10 +137,9 @@
         boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
         transition: 'transform 0.2s ease, opacity 0.3s ease'
       });
-
       installBtn.addEventListener('click', () => {
         if (deferredPrompt) {
-          deferredPrompt.prompt(); // Mostrar prompt de instalación
+          deferredPrompt.prompt();
           deferredPrompt.userChoice.then(() => {
             deferredPrompt = null;
             installBtn.style.opacity = '0';
@@ -151,8 +147,25 @@
           });
         }
       });
-
       document.body.appendChild(installBtn);
+    });
+
+    // Cambiar tema claro/oscuro
+    const btnTema = document.getElementById('toggleTema');
+    function setTheme(theme) {
+      document.body.setAttribute('data-theme', theme);
+      btnTema.textContent = theme === 'light' ? '🌙 Tema Oscuro' : '☀️ Tema Claro';
+    }
+    btnTema.addEventListener('click', () => {
+      const actual = document.body.getAttribute('data-theme');
+      setTheme(actual === 'light' ? 'dark' : 'light');
+    });
+    // Iniciar en modo claro
+    setTheme('light');
+
+    // Splash: ocultar al entrar
+    document.getElementById('entrarApp').addEventListener('click', function() {
+      document.getElementById('splash').classList.remove('splash-visible');
     });
   </script>
 </body>
