@@ -1,3 +1,4 @@
+// ========== Función para formatear moneda ==========
 function formatCurrency(value) {
   return Number(value).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
@@ -21,6 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(ocultarSplash, 6000); // 6 segundos
   }
 
+  // ========== VARIABLES ==========
   const { jsPDF } = window.jspdf;
   const facturasContainer = document.getElementById('facturas');
   const dineroRecibido = document.getElementById('dineroRecibido');
@@ -43,6 +45,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const estadisticas = document.getElementById('estadisticas');
   const facturaForm = document.getElementById('facturaForm');
   const feedbackDiv = document.getElementById('feedback');
+  const btnBorrarHistorial = document.getElementById('btnBorrarHistorial');
+  const btnDescargarHistorial = document.getElementById('btnDescargarHistorial');
+  const btnExportarPDF = document.getElementById('btnExportarPDF');
 
   const textos = {
     sinTransacciones: 'No hay transacciones en el historial.',
@@ -64,7 +69,39 @@ document.addEventListener('DOMContentLoaded', () => {
   const itemsPerPage = 10;
   let historial = [];
 
-  // -- BLOQUE DE GUARDADO Y RESTAURACIÓN --
+  // ========== BLOQUE CAMBIO DE TEMA CLARO/OSCURO ==========
+  function cargarTema() {
+    const temaGuardado = localStorage.getItem('tema');
+    if (temaGuardado === 'dark') {
+      document.body.setAttribute('data-theme', 'dark');
+      toggleTema.textContent = '☀️ Tema Claro';
+    } else {
+      document.body.setAttribute('data-theme', 'light');
+      toggleTema.textContent = '🌙 Tema Oscuro';
+    }
+  }
+
+  toggleTema.addEventListener('click', () => {
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    localStorage.setItem('tema', isDark ? 'light' : 'dark');
+    toggleTema.textContent = isDark ? '🌙 Tema Oscuro' : '☀️ Tema Claro';
+    feedback(isDark ? 'Tema claro activado' : 'Tema oscuro activado');
+  });
+
+  // ========== FEEDBACK VISUAL ANIMADO ==========
+  function feedback(msg) {
+    if (feedbackDiv) {
+      feedbackDiv.textContent = msg;
+      feedbackDiv.style.display = 'block';
+      feedbackDiv.className = 'feedback';
+      setTimeout(() => {
+        feedbackDiv.style.display = 'none';
+      }, 2500);
+    }
+  }
+
+  // ========== BLOQUE DE GUARDADO Y RESTAURACIÓN ==========
   const FORM_STATE_KEY = 'formularioTemporal';
 
   function guardarFormularioTemporal() {
@@ -94,38 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Feedback visual animado
-  function feedback(msg) {
-    if (feedbackDiv) {
-      feedbackDiv.textContent = msg;
-      feedbackDiv.style.display = 'block';
-      feedbackDiv.className = 'feedback';
-      setTimeout(() => {
-        feedbackDiv.style.display = 'none';
-      }, 2500);
-    }
-  }
-
-  function cargarTema() {
-    const temaGuardado = localStorage.getItem('tema');
-    if (temaGuardado === 'dark') {
-      document.body.setAttribute('data-theme', 'dark');
-      toggleTema.textContent = '☀️ Tema Claro';
-    } else {
-      document.body.setAttribute('data-theme', 'light');
-      toggleTema.textContent = '🌙 Tema Oscuro';
-    }
-  }
-
-  toggleTema.addEventListener('click', () => {
-    const isDark = document.body.getAttribute('data-theme') === 'dark';
-    document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
-    localStorage.setItem('tema', isDark ? 'light' : 'dark');
-    toggleTema.textContent = isDark ? '🌙 Tema Oscuro' : '☀️ Tema Claro';
-    feedback(isDark ? 'Tema claro activado' : 'Tema oscuro activado');
-  });
-
-  // Sonido
+  // ========== SONIDO ==========
   const AudioContext = window.AudioContext || window.webkitAudioContext;
   let audioCtx = null;
 
@@ -186,6 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => oscillator.stop(), 350);
   }
 
+  // ========== LOCALSTORAGE E HISTORIAL ==========
   function isLocalStorageAvailable() {
     try {
       const test = '__test__';
@@ -223,6 +230,7 @@ document.addEventListener('DOMContentLoaded', () => {
         .every(key => key in item && item[key] !== undefined && item[key] !== null);
   }
 
+  // ========== TABS ==========
   function switchTab(tabId) {
     tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
     tabContents.forEach(content => content.classList.toggle('active', content.id === `${tabId}-tab`));
@@ -230,6 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playBeep();
   }
 
+  // ========== FACTURAS ==========
   function renderFacturas() {
     if (facturasContainer.childElementCount === 0) agregarFactura();
   }
@@ -317,7 +326,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const recibido = parseFloat(dineroRecibido.value) || 0;
     const devuelto = recibido - totalAjustado;
 
-    // Mostrar "Dinero a recibir" si es negativo
     let mensajeDinero = '';
     if (devuelto < 0) {
       mensajeDinero = `<span style="color:#ff4444;">Dinero a recibir: ${formatCurrency(Math.abs(devuelto))}</span>`;
@@ -345,6 +353,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   facturasContainer.addEventListener('input', guardarFormularioTemporal);
 
+  // ========== GUARDAR HISTORIAL ==========
   function guardarHistorial() {
     const suma = obtenerSumaFacturas();
     if (suma === null || suma.totalFacturas === 0) {
@@ -379,6 +388,7 @@ document.addEventListener('DOMContentLoaded', () => {
     feedback(textos.guardar);
   }
 
+  // ========== LIMPIAR CAMPOS ==========
   function limpiarCampos() {
     facturasContainer.innerHTML = '';
     dineroRecibido.value = '';
@@ -391,6 +401,7 @@ document.addEventListener('DOMContentLoaded', () => {
     feedback(textos.camposLimpiados);
   }
 
+  // ========== MOSTRAR HISTORIAL ==========
   function mostrarHistorial(page = 1) {
     historial = loadHistorial();
     const filteredHistorial = filtroFecha?.value
@@ -423,6 +434,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     actualizarEstadisticas(filteredHistorial);
     actualizarGraficaResumen(filteredHistorial);
+    currentPage = page;
   }
 
   function actualizarEstadisticas(historialFiltrado) {
@@ -442,6 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
   }
 
+  // ========== ELIMINAR ENTRADA DEL HISTORIAL ==========
   function eliminarEntrada(index) {
     historial.splice(index, 1);
     saveHistorial();
@@ -454,6 +467,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   window.eliminarEntrada = eliminarEntrada;
 
+  // ========== EXPORTAR Y DESCARGAR HISTORIAL ==========
   function descargarHistorial() {
     historial = loadHistorial();
     if (historial.length === 0) {
@@ -499,7 +513,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ]);
     if (typeof doc.autoTable === 'function') {
       doc.autoTable({ head: headers, body: data, startY: 30 });
-      doc.save(`historial_transacciones_${new Date().toISOString().split('Tema')[0]}.pdf`);
+      doc.save(`historial_transacciones_${new Date().toISOString().split('T')[0]}.pdf`);
       playBeep();
       feedback('Historial PDF generado');
     } else {
@@ -509,6 +523,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ========== BORRAR HISTORIAL COMPLETO ==========
   function borrarHistorial() {
     if (confirm('¿Seguro que quieres borrar todo el historial?')) {
       historial = [];
@@ -519,6 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ========== EVENTOS ==========
   toggleSonido.addEventListener('click', () => {
     sonidoHabilitado = !sonidoHabilitado;
     toggleSonido.textContent = `🔊 Sonido: ${sonidoHabilitado ? 'Activado' : 'Desactivado'}`;
@@ -551,14 +567,15 @@ document.addEventListener('DOMContentLoaded', () => {
   btnGuardar?.addEventListener('click', guardarHistorial);
   btnLimpiar?.addEventListener('click', limpiarCampos);
   btnAplicarRebaja?.addEventListener('click', calcularAutomatico);
-  document.getElementById('btnBorrarHistorial')?.addEventListener('click', borrarHistorial);
-  document.getElementById('btnDescargarHistorial')?.addEventListener('click', descargarHistorial);
-  document.getElementById('btnExportarPDF')?.addEventListener('click', exportarHistorialPDF);
+  btnBorrarHistorial?.addEventListener('click', borrarHistorial);
+  btnDescargarHistorial?.addEventListener('click', descargarHistorial);
+  btnExportarPDF?.addEventListener('click', exportarHistorialPDF);
   facturaForm?.addEventListener('submit', e => {
     e.preventDefault();
     guardarHistorial();
   });
 
+  // ========== INICIALIZACIÓN ==========
   cargarTema();
   renderFacturas();
   restaurarFormularioTemporal();
