@@ -1,18 +1,115 @@
+/* Variables globales */
 :root {
   --primary: #1976d2; /* Azul principal */
   --secondary: #40e0d0; /* Turquesa secundario */
-  --bg-light: #f8f9fa;
   --bg-dark: #001e1c;
-  --text-dark: #000;
-  --text-highlight: #6a50c8; /* Color púrpura para subtítulos destacados */
-  --text-light: #e0f7fa;
+  --bg-light: #ffffff;
+  --text-dark: #ffffff; /* Texto blanco en modo claro */
+  --text-light: #e0f7fa; /* Texto claro en modo oscuro */
   --error: #ff4444;
   --transition-speed: 0.3s;
 }
 
-/* Estilos generales */
+/* Splash screen */
+#splash {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity var(--transition-speed);
+  background: transparent;
+}
+#splash:not(.splash-visible) {
+  opacity: 0;
+  pointer-events: none;
+}
+.splash-animated-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(120deg, #0f2027 0%, #2c5364 60%, #8f94fb 100%);
+  animation: splashGradientMove 6s linear infinite alternate;
+  filter: blur(2px) brightness(0.85);
+}
+@keyframes splashGradientMove {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
+}
+.splash-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  background: rgba(16, 18, 44, 0.85);
+  padding: 40px 28px;
+  border-radius: 22px;
+  box-shadow:
+    0 2px 24px #8f94fb88,
+    0 0 24px #00ffe5cc,
+    0 0 120px #a770ef55 inset;
+  backdrop-filter: blur(8px);
+  animation: splash-in 1.1s cubic-bezier(.56,.12,.37,1.2);
+}
+.splash-content h1 {
+  font-size: 2.5em;
+  margin-bottom: 0.5em;
+  letter-spacing: 1px;
+  font-weight: 700;
+  text-shadow: 0 0 24px #8f94fb, 0 0 12px #00ffe5, 0 0 2px #fff;
+}
+.splash-content p {
+  font-size: 1.15em;
+  margin-bottom: 1.5em;
+  letter-spacing: 0.5px;
+  color: #c6f0ff;
+}
+.splash-content button {
+  font-size: 1.15em;
+  font-weight: bold;
+  padding: 14px 48px;
+  background: linear-gradient(90deg, #00ffe5 10%, #8f94fb 90%);
+  color: #10122c;
+  border: none;
+  border-radius: 100px;
+  box-shadow:
+    0 0 18px #00ffe5cc,
+    0 0 40px #8f94fb55 inset;
+  cursor: pointer;
+  transition: background var(--transition-speed), color var(--transition-speed), box-shadow var(--transition-speed);
+  position: relative;
+  overflow: hidden;
+}
+.splash-content button::after {
+  content: "";
+  display: block;
+  position: absolute;
+  left: 10%;
+  top: 0;
+  width: 80%;
+  height: 40%;
+  background: linear-gradient(90deg, #fff8, #8f94fb44 70%, transparent 100%);
+  opacity: 0.15;
+  filter: blur(2px);
+  pointer-events: none;
+}
+.splash-content button:hover {
+  background: linear-gradient(90deg, #a770ef, #00ffe5 80%);
+  color: #fff;
+  box-shadow:
+    0 0 32px #a770efcc,
+    0 0 80px #00ffe5aa inset;
+}
+
+@keyframes splash-in {
+  from { transform: scale(0.7) translateY(50px); opacity: 0;}
+  to { transform: scale(1) translateY(0); opacity: 1;}
+}
+
+/* Cuerpo general */
 body[data-theme="light"] {
-  background-color: var(--bg-light);
+  background: var(--bg-light);
   color: var(--text-dark);
 }
 body[data-theme="dark"] {
@@ -20,32 +117,12 @@ body[data-theme="dark"] {
   color: var(--text-light);
 }
 
-/* Títulos */
+/* Estilos generales */
 h1, h2, h3 {
   text-align: center;
-  margin-bottom: 10px;
-  font-weight: bold;
-  color: var(--text-dark);
+  text-shadow: 0 0 5px var(--primary);
 }
 
-h2 {
-  color: var(--text-highlight); /* Púrpura vibrante para subtítulos */
-  font-size: 1.1em;
-  font-weight: normal;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-
-/* Contenedor principal */
-.container {
-  max-width: 600px;
-  margin: 0 auto;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.05);
-}
-
-/* Tabs de navegación */
 .tabs {
   display: flex;
   justify-content: center;
@@ -59,18 +136,17 @@ h2 {
   background: var(--primary);
   border: none;
   border-radius: 8px 8px 0 0;
-  color: white;
+  color: var(--text-dark);
   cursor: pointer;
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
 }
 .tab-btn.active {
   background: var(--secondary);
-  box-shadow: 0 0 10px var(--secondary);
+  box-shadow: 0 0 15px var(--secondary);
 }
 .tab-btn:hover {
   background: var(--secondary);
 }
-
 .tab-content {
   display: none;
   background: var(--bg-dark);
@@ -81,19 +157,15 @@ h2 {
 .tab-content.active {
   display: block;
 }
-
-/* Campos de formulario */
 .campo {
   margin-bottom: 15px;
 }
-
 label {
   display: block;
   margin-bottom: 5px;
   text-shadow: 0 0 4px var(--primary);
-  color: var(--text-dark);
+  color: var(--text-light); /* Etiquetas siempre claras en modo oscuro */
 }
-
 input[type="number"],
 input[type="text"],
 input[type="date"] {
@@ -103,21 +175,19 @@ input[type="date"] {
   border: none;
   border-radius: 5px;
   background: var(--bg-dark);
-  color: var(--text-light);
+  color: var(--text-light); /* Texto claro en modo oscuro */
   box-shadow: 0 0 8px var(--primary) inset;
   transition: box-shadow var(--transition-speed);
 }
-
-input:focus,
-input:hover {
+input[type="number"]:focus,
+input[type="text"]:focus,
+input[type="date"]:focus {
+  outline: none;
   box-shadow: 0 0 12px var(--primary) inset;
 }
-
 input.error {
   border: 2px solid var(--error);
 }
-
-/* Facturas */
 .facturas-container {
   display: flex;
   flex-direction: column;
@@ -128,8 +198,9 @@ input.error {
   align-items: center;
   gap: 10px;
 }
-
-/* Botones */
+.factura-item input {
+  flex: 1;
+}
 button {
   padding: 10px;
   margin-top: 10px;
@@ -138,7 +209,7 @@ button {
   background: var(--primary);
   border: none;
   border-radius: 8px;
-  color: white;
+  color: var(--text-light); /* Botones con texto claro en modo oscuro */
   cursor: pointer;
   box-shadow: 0 0 10px var(--primary);
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
@@ -147,24 +218,11 @@ button:hover {
   background: var(--secondary);
   box-shadow: 0 0 15px var(--secondary);
 }
-
 .delete-btn {
   width: auto;
   padding: 5px 10px;
   font-size: 14px;
 }
-
-/* Resultado final */
-#resultado {
-  text-align: center;
-  font-weight: bold;
-  font-size: 1.4em;
-  margin-top: 15px;
-  color: var(--text-dark);
-  text-shadow: 0 0 6px var(--primary);
-}
-
-/* Mensaje de error */
 #error {
   text-align: center;
   font-weight: bold;
@@ -174,13 +232,19 @@ button:hover {
   text-shadow: 0 0 4px var(--error);
   display: none;
 }
-
-/* Historial */
+#resultado {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.4em;
+  margin-top: 15px;
+  color: var(--text-light); /* Resultado claro en modo oscuro */
+  text-shadow: 0 0 6px var(--primary);
+}
 #historial {
   max-height: 300px;
   overflow-y: auto;
   font-size: 0.9em;
-  color: var(--text-light);
+  color: var(--text-light); /* Historial en modo oscuro tiene texto claro */
 }
 #historial div {
   margin-bottom: 5px;
@@ -188,34 +252,26 @@ button:hover {
   align-items: center;
   justify-content: space-between;
 }
-
-/* Paginación */
 .pagination {
   display: flex;
   justify-content: center;
   gap: 10px;
   margin-top: 10px;
 }
-
-/* Configuración de tema y sonido */
 .config {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
   margin-bottom: 20px;
 }
-
-/* Estadísticas */
 .stats {
   margin-top: 20px;
   padding: 10px;
   background: var(--bg-dark);
   border-radius: 8px;
   text-align: center;
-  color: var(--text-light);
+  color: var(--text-light); /* Estadísticas claras en modo oscuro */
 }
-
-/* Feedback visual */
 .feedback {
   position: fixed;
   top: 16px;
@@ -233,21 +289,17 @@ button:hover {
   opacity: 0.98;
   pointer-events: none;
 }
-
 @keyframes feedbackfade {
   0% { opacity: 0; transform: translateX(-50%) scale(0.7);}
   10% { opacity: 1; transform: translateX(-50%) scale(1);}
   70% { opacity: 1; }
   100% { opacity: 0; transform: translateX(-50%) scale(0.7);}
 }
-
-/* Foco visible */
 button:focus-visible,
 input:focus-visible {
   outline: 3px solid #a770ef;
   outline-offset: 2px;
 }
-
 input.error:focus-visible {
   outline: 3px solid var(--error);
 }
