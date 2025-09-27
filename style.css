@@ -1,13 +1,36 @@
-/* Variables globales */
 :root {
   --primary: #1976d2; /* Azul principal */
   --secondary: #40e0d0; /* Turquesa secundario */
   --bg-dark: #001e1c;
   --bg-light: #ffffff;
-  --text-dark: #ffffff; /* Texto blanco en modo claro */
-  --text-light: #e0f7fa; /* Texto claro en modo oscuro */
+  --text-dark: #10122c; /* Texto oscuro en modo claro */
+  --text-light: #fff;   /* Texto claro en modo oscuro */
   --error: #ff4444;
   --transition-speed: 0.3s;
+}
+
+/* Tema claro */
+body[data-theme="light"] {
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+body[data-theme="light"] .tab-content,
+body[data-theme="light"] input,
+body[data-theme="light"] button {
+  background: var(--bg-light);
+  color: var(--text-dark);
+}
+
+/* Tema oscuro */
+body[data-theme="dark"] {
+  background: linear-gradient(135deg, #0f2027, #2c5364);
+  color: var(--text-light);
+}
+body[data-theme="dark"] .tab-content,
+body[data-theme="dark"] input,
+body[data-theme="dark"] button {
+  background: var(--bg-dark);
+  color: var(--text-light);
 }
 
 /* Splash screen */
@@ -107,20 +130,11 @@
   to { transform: scale(1) translateY(0); opacity: 1;}
 }
 
-/* Cuerpo general */
-body[data-theme="light"] {
-  background: var(--bg-light);
-  color: var(--text-dark);
-}
-body[data-theme="dark"] {
-  background: linear-gradient(135deg, #0f2027, #2c5364);
-  color: var(--text-light);
-}
-
 /* Estilos generales */
 h1, h2, h3 {
   text-align: center;
   text-shadow: 0 0 5px var(--primary);
+  color: inherit;
 }
 
 .tabs {
@@ -136,7 +150,7 @@ h1, h2, h3 {
   background: var(--primary);
   border: none;
   border-radius: 8px 8px 0 0;
-  color: var(--text-dark);
+  color: var(--text-light);
   cursor: pointer;
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
 }
@@ -147,9 +161,11 @@ h1, h2, h3 {
 .tab-btn:hover {
   background: var(--secondary);
 }
+
 .tab-content {
   display: none;
-  background: var(--bg-dark);
+  background: var(--bg-light);
+  color: var(--text-dark);
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 0 10px var(--primary) inset;
@@ -157,15 +173,22 @@ h1, h2, h3 {
 .tab-content.active {
   display: block;
 }
+body[data-theme="dark"] .tab-content {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
 .campo {
   margin-bottom: 15px;
 }
+
 label {
   display: block;
   margin-bottom: 5px;
   text-shadow: 0 0 4px var(--primary);
-  color: var(--text-light); /* Etiquetas siempre claras en modo oscuro */
+  color: inherit;
 }
+
 input[type="number"],
 input[type="text"],
 input[type="date"] {
@@ -174,11 +197,18 @@ input[type="date"] {
   font-size: 16px;
   border: none;
   border-radius: 5px;
-  background: var(--bg-dark);
-  color: var(--text-light); /* Texto claro en modo oscuro */
+  background: var(--bg-light);
+  color: var(--text-dark);
   box-shadow: 0 0 8px var(--primary) inset;
   transition: box-shadow var(--transition-speed);
 }
+body[data-theme="dark"] input[type="number"],
+body[data-theme="dark"] input[type="text"],
+body[data-theme="dark"] input[type="date"] {
+  background: var(--bg-dark);
+  color: var(--text-light);
+}
+
 input[type="number"]:focus,
 input[type="text"]:focus,
 input[type="date"]:focus {
@@ -209,7 +239,7 @@ button {
   background: var(--primary);
   border: none;
   border-radius: 8px;
-  color: var(--text-light); /* Botones con texto claro en modo oscuro */
+  color: var(--text-light);
   cursor: pointer;
   box-shadow: 0 0 10px var(--primary);
   transition: background var(--transition-speed), box-shadow var(--transition-speed);
@@ -237,14 +267,14 @@ button:hover {
   font-weight: bold;
   font-size: 1.4em;
   margin-top: 15px;
-  color: var(--text-light); /* Resultado claro en modo oscuro */
+  color: inherit;
   text-shadow: 0 0 6px var(--primary);
 }
 #historial {
   max-height: 300px;
   overflow-y: auto;
   font-size: 0.9em;
-  color: var(--text-light); /* Historial en modo oscuro tiene texto claro */
+  color: inherit;
 }
 #historial div {
   margin-bottom: 5px;
@@ -270,7 +300,11 @@ button:hover {
   background: var(--bg-dark);
   border-radius: 8px;
   text-align: center;
-  color: var(--text-light); /* Estadísticas claras en modo oscuro */
+  color: var(--text-light);
+}
+body[data-theme="light"] .stats {
+  background: var(--bg-light);
+  color: var(--text-dark);
 }
 .feedback {
   position: fixed;
@@ -302,4 +336,44 @@ input:focus-visible {
 }
 input.error:focus-visible {
   outline: 3px solid var(--error);
+}
+
+/* RESPONSIVE */
+@media (max-width: 600px) {
+  .splash-content {
+    padding: 20px 10px;
+    font-size: 0.95em;
+  }
+  .tab-content {
+    padding: 10px;
+  }
+  .tabs {
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .tab-btn {
+    width: 100%;
+    font-size: 15px;
+    border-radius: 8px;
+    margin-bottom: 4px;
+  }
+  .config {
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-end;
+    margin-bottom: 10px;
+  }
+  .stats {
+    font-size: 0.95em;
+    padding: 7px;
+  }
+  #historial {
+    max-height: 180px;
+    font-size: 0.85em;
+  }
+  #resultado {
+    font-size: 1.1em;
+    margin-top: 10px;
+  }
 }
