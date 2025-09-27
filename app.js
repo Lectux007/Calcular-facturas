@@ -329,8 +329,12 @@ document.addEventListener('DOMContentLoaded', () => {
     return { totalFacturas: suma, rebaja };
   }
 
+  // ========== FUNCIÓN MODIFICADA ==========
   function calcularAutomatico() {
     errorDiv.style.display = 'none';
+    errorDiv.textContent = '';
+    dineroRecibido.classList.remove('error');
+
     const suma = obtenerSumaFacturas();
     if (suma === null) {
       resultado.innerHTML = '';
@@ -343,8 +347,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let mensajeDinero = '';
     if (devuelto < 0) {
-      mensajeDinero = `<span style="color:#ff4444;">Dinero a recibir: ${formatCurrency(Math.abs(devuelto))}</span>`;
+      playError();
+      dineroRecibido.classList.add('error');
+      mensajeDinero = `<span style="color:#ff4444; font-weight:bold;">
+        Dinero insuficiente. Falta: ${formatCurrency(Math.abs(devuelto))}
+      </span>`;
+      errorDiv.style.display = 'block';
+      errorDiv.textContent = `Dinero insuficiente. Faltan ${formatCurrency(Math.abs(devuelto))}`;
     } else {
+      dineroRecibido.classList.remove('error');
+      errorDiv.style.display = 'none';
       mensajeDinero = `Dinero a devolver: ${formatCurrency(devuelto)}`;
     }
 
@@ -398,7 +410,6 @@ document.addEventListener('DOMContentLoaded', () => {
     limpiarCampos();
     localStorage.removeItem(FORM_STATE_KEY); // limpiar temporal
     switchTab('historial');
-    // mostrarHistorial(); --> Ya lo hace switchTab
     playBeep();
     feedback(textos.guardar);
   }
@@ -454,7 +465,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextPage) nextPage.disabled = end >= filteredHistorial.length;
 
     actualizarEstadisticas(filteredHistorial);
-    // actualizarGraficaResumen(filteredHistorial); // Solo en switchTab
     currentPage = page;
   }
 
@@ -608,7 +618,6 @@ function actualizarGraficaResumen(historialFiltrado) {
   const canvas = document.getElementById('graficaResumen');
   if (!canvas) return;
 
-  // Limita a los últimos 30 días/transacciones
   const MAX_DAYS = 30;
   const agrupado = {};
   historialFiltrado.slice(0, MAX_DAYS).forEach(item => {
