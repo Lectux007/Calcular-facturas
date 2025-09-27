@@ -13,6 +13,10 @@
   <!-- Meta Theme Color -->
   <meta name="theme-color" content="#1976d2">
 
+  <!-- SEO -->
+  <meta name="description" content="App moderna para controlar tus facturas y dinero de forma segura.">
+  <meta name="keywords" content="facturas, dinero, control, finanzas, app, PWA">
+
   <!-- Iconos para dispositivos -->
   <link rel="icon" type="image/png" sizes="192x192" href="./icono.png">
   <link rel="apple-touch-icon" href="./icono.png">
@@ -28,37 +32,37 @@
 </head>
 <body data-theme="light">
   <!-- Splash screen moderno y tecnológico -->
-  <div id="splash" class="splash-visible">
+  <div id="splash" class="splash-visible" role="dialog" aria-modal="true" aria-labelledby="splashTitle">
     <div class="splash-animated-bg"></div>
     <div class="splash-content">
-      <h1>¡Bienvenido!</h1>
+      <h1 id="splashTitle">¡Bienvenido!</h1>
       <p>Controla tu dinero con tecnología moderna</p>
-      <button id="entrarApp">Entrar</button>
+      <button id="entrarApp" aria-label="Entrar a la aplicación">Entrar</button>
     </div>
   </div>
   <!-- Fin splash -->
 
   <!-- Feedback visual -->
-  <div id="feedback" style="display:none;"></div>
+  <div id="feedback" style="display:none;" role="status" aria-live="polite"></div>
 
   <h1>Control de Dinero</h1>
 
-  <div class="config">
-    <button id="toggleSonido">🔊 Sonido: Activado</button>
-    <button id="toggleTema">🌙 Tema Oscuro</button>
+  <div class="config" aria-label="Configuración">
+    <button id="toggleSonido" aria-pressed="true" aria-label="Alternar sonido">🔊 Sonido: Activado</button>
+    <button id="toggleTema" aria-label="Alternar tema">🌙 Tema Oscuro</button>
   </div>
 
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="facturas">Facturas</button>
-    <button class="tab-btn" data-tab="historial">Historial</button>
+  <div class="tabs" role="tablist" aria-label="Navegación por pestañas">
+    <button class="tab-btn active" data-tab="facturas" role="tab" aria-selected="true" aria-controls="facturas-tab">Facturas</button>
+    <button class="tab-btn" data-tab="historial" role="tab" aria-selected="false" aria-controls="historial-tab">Historial</button>
   </div>
 
-  <div id="facturas-tab" class="tab-content active">
-    <form id="facturaForm" autocomplete="off" onsubmit="return false;">
+  <div id="facturas-tab" class="tab-content active" role="tabpanel" aria-labelledby="facturas">
+    <form id="facturaForm" autocomplete="off" aria-label="Formulario de facturas">
       <div class="campo">
         <label for="facturas">Facturas:</label>
         <div id="facturas" class="facturas-container"></div>
-        <button type="button" id="btnAgregar">+ Añadir factura</button>
+        <button type="button" id="btnAgregar" aria-label="Añadir factura">+ Añadir factura</button>
       </div>
       <div class="campo">
         <label for="dineroRecibido">Dinero recibido:</label>
@@ -66,42 +70,42 @@
       </div>
       <div class="campo">
         <label for="rebaja">Rebaja (opcional):</label>
-        <input id="rebaja" type="number" step="0.01" min="0" placeholder="Monto de rebaja" />
-        <button type="button" id="btnAplicarRebaja">Aplicar Rebaja</button>
+        <input id="rebaja" type="number" step="0.01" min="0" placeholder="Monto de rebaja" aria-label="Monto de rebaja" />
+        <button type="button" id="btnAplicarRebaja" aria-label="Aplicar rebaja">Aplicar Rebaja</button>
       </div>
-      <button type="button" id="btnGuardar">Guardar en historial</button>
-      <button type="button" id="btnLimpiar">Limpiar campos</button>
+      <button type="button" id="btnGuardar" aria-label="Guardar en historial">Guardar en historial</button>
+      <button type="button" id="btnLimpiar" aria-label="Limpiar campos">Limpiar campos</button>
     </form>
     <div id="error" role="alert" aria-live="polite"></div>
     <h2 id="resultado"></h2>
   </div>
 
-  <div id="historial-tab" class="tab-content">
+  <div id="historial-tab" class="tab-content" role="tabpanel" aria-labelledby="historial">
     <h3>Historial:</h3>
     <div class="campo">
       <label for="filtroFecha">Filtrar por fecha:</label>
-      <input id="filtroFecha" type="date" />
+      <input id="filtroFecha" type="date" aria-label="Filtrar historial por fecha" />
     </div>
     <div id="historial"></div>
-    <div class="pagination">
-      <button id="prevPage" disabled>Anterior</button>
+    <div class="pagination" aria-label="Paginación historial">
+      <button id="prevPage" disabled aria-label="Página anterior">Anterior</button>
       <span id="pageInfo"></span>
-      <button id="nextPage">Siguiente</button>
+      <button id="nextPage" aria-label="Página siguiente">Siguiente</button>
     </div>
     <div class="stats" id="estadisticas"></div>
-    <canvas id="graficaResumen" style="max-width:500px;margin:20px auto 30px auto;display:block;"></canvas>
-    <button id="btnBorrarHistorial">Borrar historial</button>
-    <button id="btnDescargarHistorial">Descargar CSV</button>
-    <button id="btnExportarPDF">Exportar PDF</button>
+    <canvas id="graficaResumen" style="max-width:500px;margin:20px auto 30px auto;display:block;" aria-label="Resumen gráfico"></canvas>
+    <button id="btnBorrarHistorial" aria-label="Borrar historial">Borrar historial</button>
+    <button id="btnDescargarHistorial" aria-label="Descargar historial CSV">Descargar CSV</button>
+    <button id="btnExportarPDF" aria-label="Exportar historial a PDF">Exportar PDF</button>
   </div>
 
   <!-- Librerías externas -->
-  <script src="./chart.min.js"></script>
-  <script src="./jspdf.umd.min.js"></script>
-  <script src="./jspdf.plugin.autotable.min.js"></script>
+  <script src="./chart.min.js" defer></script>
+  <script src="./jspdf.umd.min.js" defer></script>
+  <script src="./jspdf.plugin.autotable.min.js" defer></script>
 
   <!-- Aplicación principal -->
-  <script src="./app.js"></script>
+  <script src="./app.js" defer></script>
 
   <!-- Registro del Service Worker y cambio de tema -->
   <script>
@@ -137,6 +141,7 @@
         boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
         transition: 'transform 0.2s ease, opacity 0.3s ease'
       });
+      installBtn.setAttribute('aria-label', 'Instalar aplicación');
       installBtn.addEventListener('click', () => {
         if (deferredPrompt) {
           deferredPrompt.prompt();
@@ -150,7 +155,13 @@
       document.body.appendChild(installBtn);
     });
 
-    // Cambiar tema claro/oscuro
+    // Cambiar tema claro/oscuro según preferencia del sistema
+    function getPreferredTheme() {
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      return 'light';
+    }
     const btnTema = document.getElementById('toggleTema');
     function setTheme(theme) {
       document.body.setAttribute('data-theme', theme);
@@ -160,8 +171,7 @@
       const actual = document.body.getAttribute('data-theme');
       setTheme(actual === 'light' ? 'dark' : 'light');
     });
-    // Iniciar en modo claro
-    setTheme('light');
+    setTheme(getPreferredTheme());
 
     // Splash: ocultar al entrar
     document.getElementById('entrarApp').addEventListener('click', function() {
