@@ -3,6 +3,15 @@ function formatCurrency(value) {
   return Number(value).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
+// ========== Debounce para mejorar rendimiento ==========
+function debounce(fn, delay) {
+  let timer = null;
+  return function(...args) {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   // Splash screen behavior
   const splash = document.getElementById('splash');
@@ -110,6 +119,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const rebaja = rebajaInput.value;
     localStorage.setItem(FORM_STATE_KEY, JSON.stringify({ facturas, recibido, rebaja }));
   }
+
+  // Debounce para guardar formulario temporal
+  const guardarFormularioTemporalDebounced = debounce(guardarFormularioTemporal, 500);
 
   function restaurarFormularioTemporal() {
     const datos = localStorage.getItem(FORM_STATE_KEY);
@@ -234,7 +246,10 @@ document.addEventListener('DOMContentLoaded', () => {
   function switchTab(tabId) {
     tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tabId));
     tabContents.forEach(content => content.classList.toggle('active', content.id === `${tabId}-tab`));
-    if (tabId === 'historial') mostrarHistorial();
+    if (tabId === 'historial') {
+      mostrarHistorial();
+      actualizarGraficaResumen(loadHistorial()); // Solo cuando está en historial
+    }
     playBeep();
   }
 
@@ -263,7 +278,7 @@ document.addEventListener('DOMContentLoaded', () => {
         input.classList.add('error');
       }
       calcularAutomatico();
-      guardarFormularioTemporal();
+      guardarFormularioTemporalDebounced();
     });
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'delete-btn';
@@ -273,7 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     deleteBtn.addEventListener('click', () => {
       div.remove();
       calcularAutomatico();
-      guardarFormularioTemporal();
+      guardarFormularioTemporalDebounced();
       playDestruction();
       feedback(textos.borrado);
     });
@@ -343,15 +358,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   dineroRecibido.addEventListener('input', () => {
     calcularAutomatico();
-    guardarFormularioTemporal();
+    guardarFormularioTemporalDebounced();
   });
 
   rebajaInput.addEventListener('input', () => {
     calcularAutomatico();
-    guardarFormularioTemporal();
+    guardarFormularioTemporalDebounced();
   });
 
-  facturasContainer.addEventListener('input', guardarFormularioTemporal);
+  facturasContainer.addEventListener('input', guardarFormularioTemporalDebounced);
 
   // ========== GUARDAR HISTORIAL ==========
   function guardarHistorial() {
@@ -383,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
     limpiarCampos();
     localStorage.removeItem(FORM_STATE_KEY); // limpiar temporal
     switchTab('historial');
-    mostrarHistorial();
+    // mostrarHistorial(); --> Ya lo hace switchTab
     playBeep();
     feedback(textos.guardar);
   }
@@ -402,11 +417,17 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ========== MOSTRAR HISTORIAL ==========
+  let lastHistorialHash = "";
   function mostrarHistorial(page = 1) {
     historial = loadHistorial();
     const filteredHistorial = filtroFecha?.value
       ? historial.filter(item => item.fechaISO === filtroFecha.value)
       : historial;
+
+    // Evita renderizados innecesarios
+    const hash = JSON.stringify(filteredHistorial) + page;
+    if (hash === lastHistorialHash) return;
+    lastHistorialHash = hash;
 
     const start = (page - 1) * itemsPerPage;
     const end = start + itemsPerPage;
@@ -433,7 +454,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (nextPage) nextPage.disabled = end >= filteredHistorial.length;
 
     actualizarEstadisticas(filteredHistorial);
-    actualizarGraficaResumen(filteredHistorial);
+    // actualizarGraficaResumen(filteredHistorial); // Solo en switchTab
     currentPage = page;
   }
 
@@ -561,7 +582,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   btnAgregar?.addEventListener('click', () => {
     agregarFactura();
-    guardarFormularioTemporal();
+    guardarFormularioTemporalDebounced();
   });
 
   btnGuardar?.addEventListener('click', guardarHistorial);
@@ -579,17 +600,18 @@ document.addEventListener('DOMContentLoaded', () => {
   cargarTema();
   renderFacturas();
   restaurarFormularioTemporal();
-  mostrarHistorial();
   switchTab('facturas');
 });
 
-// === GRAFICA RESUMEN ===
+// === GRAFICA RESUMEN MEJORADA ===
 function actualizarGraficaResumen(historialFiltrado) {
   const canvas = document.getElementById('graficaResumen');
   if (!canvas) return;
 
+  // Limita a los últimos 30 días/transacciones
+  const MAX_DAYS = 30;
   const agrupado = {};
-  historialFiltrado.forEach(item => {
+  historialFiltrado.slice(0, MAX_DAYS).forEach(item => {
     agrupado[item.fechaISO] = (agrupado[item.fechaISO] || 0) + item.total;
   });
 
@@ -619,18 +641,13 @@ function actualizarGraficaResumen(historialFiltrado) {
     options: {
       plugins: {
         legend: { display: false },
-        title: {
-          display: true,
-          text: 'Resumen diario de totales'
-        }
+        title: { display: true, text: 'Resumen diario de totales' }
       },
       responsive: true,
       scales: {
         y: {
           beginAtZero: true,
-          ticks: {
-            callback: value => formatCurrency(value)
-          }
+          ticks: { callback: value => formatCurrency(value) }
         }
       }
     }
