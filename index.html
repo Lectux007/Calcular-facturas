@@ -9,8 +9,6 @@
 
   <!-- Manifest PWA -->
   <link rel="manifest" href="./manifest.json">
-
-  <!-- Meta Theme Color -->
   <meta name="theme-color" content="#1976d2">
 
   <!-- SEO -->
@@ -30,7 +28,7 @@
   <!-- Estilos -->
   <link rel="stylesheet" href="./style.css">
 </head>
-<body data-theme="light">
+<body>
   <!-- Splash screen moderno y tecnológico -->
   <div id="splash" class="splash-visible" role="dialog" aria-modal="true" aria-labelledby="splashTitle">
     <div class="splash-animated-bg"></div>
@@ -103,8 +101,6 @@
   <script src="./chart.min.js" defer></script>
   <script src="./jspdf.umd.min.js" defer></script>
   <script src="./jspdf.plugin.autotable.min.js" defer></script>
-
-  <!-- Aplicación principal -->
   <script src="./app.js" defer></script>
 
   <!-- Registro del Service Worker y cambio de tema -->
@@ -155,7 +151,7 @@
       document.body.appendChild(installBtn);
     });
 
-    // Cambiar tema claro/oscuro según preferencia del sistema
+    // Tema oscuro/claro funcional y robusto
     function getPreferredTheme() {
       if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
         return 'dark';
@@ -166,12 +162,21 @@
     function setTheme(theme) {
       document.body.setAttribute('data-theme', theme);
       btnTema.textContent = theme === 'light' ? '🌙 Tema Oscuro' : '☀️ Tema Claro';
+      localStorage.setItem('tema', theme);
     }
     btnTema.addEventListener('click', () => {
       const actual = document.body.getAttribute('data-theme');
       setTheme(actual === 'light' ? 'dark' : 'light');
     });
-    setTheme(getPreferredTheme());
+    // Al cargar, preferencia del sistema o localStorage
+    (function() {
+      const temaGuardado = localStorage.getItem('tema');
+      if (temaGuardado) {
+        setTheme(temaGuardado);
+      } else {
+        setTheme(getPreferredTheme());
+      }
+    })();
 
     // Splash: ocultar al entrar
     document.getElementById('entrarApp').addEventListener('click', function() {
